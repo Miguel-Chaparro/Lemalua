@@ -10,10 +10,12 @@ import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import AuthModal from './components/AuthModal';
 import AgeVerification from './components/AgeVerification';
+import ProductModal from './components/ProductModal';
 
 export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   return (
     <CartProvider>
@@ -27,8 +29,8 @@ export default function App() {
         {/* Main Sections */}
         <main>
           <Hero />
-          <Promotions />
-          <MostWanted />
+          <Promotions onSelectProduct={setSelectedProduct} />
+          <MostWanted onSelectProduct={setSelectedProduct} />
           <BrandStory />
           <Newsletter />
         </main>
@@ -46,6 +48,12 @@ export default function App() {
         <AuthModal 
           isOpen={isAuthOpen} 
           onClose={() => setIsAuthOpen(false)} 
+        />
+
+        {/* Product Detail Modal */}
+        <ProductModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
         />
 
         {/* Age Verification Overlay Banner */}
