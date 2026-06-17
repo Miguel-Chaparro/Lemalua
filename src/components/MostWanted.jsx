@@ -7,6 +7,8 @@ const wantedProducts = [
     name: 'Ron Añejo Solera',
     price: 75.00,
     rating: 5,
+    description: 'Envejecido 15 años | Caribe • Notas de vainilla, cacao y tabaco.',
+    tags: ['Edición Limitada', 'Premium'],
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDgQguHFI21dGPdPBMdAGdpEzsEDVS1IkX2ObuM_2cLOcV5wSkbN2gYPddyQbf0OXXtQyFlPK62wf0umcooruzRjGfCLqyM-yPDySQtBQkDvN1wf-GawOSiyRAN6vHvd9dV6msJfIkm8n90eoEWKVAeKYKIkVXHglxDO0ome5zbelFmtDi0Pll1_rFnxZe8jBLpvHpAI7SUjDgKx2CH3RKKmFimNyQ9dYBNCnIwV3CAXGDFtpczoebyhk124A_BPq5--CQhjhhm55Y'
   },
   {
@@ -14,6 +16,8 @@ const wantedProducts = [
     name: 'Vodka Glacial Pure',
     price: 45.00,
     rating: 4.5,
+    description: 'Destilado 5 veces | Rusia • Filtrado en cristal volcánico.',
+    tags: ['Destilado Premium'],
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB1c3an_UgylB3FP7p-nd4cUiWpfjkKch6aZ0BZ9V8I62NidcvuvDddx6tErAq4VxbnxQukXU6_IrogkFzK-GDu0n3bln-Vd97t4YzAkoJ2PMH9iYYb-FKT5DbaXVHLZ_Ah77Oyz_na-ajCj4xm4wkydRUT91WYg2S0-78PfUZ95F9eQKkG6ZPXgr9grPKEDHaJUV2TBgbVS7OEVAJ8HbUUoM9UKQRGBQWAjxr13Gs-x2icRUph9JFO08-qtdFt8iamlwpv84r5WLE'
   },
   {
@@ -21,6 +25,8 @@ const wantedProducts = [
     name: 'Cognac XO Privé',
     price: 210.00,
     rating: 5,
+    description: 'Grande Champagne AOC | Francia • Envejecido más de 20 años en barrica de Limusín.',
+    tags: ['Colección Privada', 'XO'],
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD0dqrTU6ldIJtv1fPofYQjxlisL1_KbLI7olDtvp6GsK3NRAhfnXwMIs44fHXalhaNb2r0kpgugTZ8OE86WDMnlvFmlXHQPfBCQ04kp2u5yB2oUEtZTBZfP0cGpYwhJUINv3QQqYutVrWyMGcK6XrDvassUdZpJk5GTiOafDJ2GGFw0BXUBOykE90MyWs-fDdZd7LhAyDywcm2YfJ2AWybnxz7HgOlY1iEAxmvGeFLpMgLW0Fci8jnem_rJEKc7PWOBVSrJWJ0Qa4'
   },
   {
@@ -28,6 +34,8 @@ const wantedProducts = [
     name: 'Licor de Café Artesanal',
     price: 38.00,
     rating: 4,
+    description: 'Café de origen colombiano | 20% ABV • Notas dulces y ahumadas.',
+    tags: ['Artesanal', 'Colombia'],
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCHDy7D_EKXy-Ad04PamLNxtVOw5nJWMyc2a0wufQv82ZTV5Ad9GgWeROtN4EaM2SbOXmvJjsTTpjAvxB6RhLUCUtiVBNdDMNyteNENIi3sHUahRvHe063hvF1YkXq0vljF60PzYUwZpZ_Fj3N0nT-ZYITosWnpjCsC4NxJhl8Gf_Usymx7Dom_IEmnsUs6FF2W3Mn2jJ8xQy-i9OyZeYDQtzypP3bIZn-TqmrjOKUNAM7RJmSl1czRv_G1ON1Md87FftnWq25KVic'
   }
 ];
