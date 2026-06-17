@@ -9,6 +9,7 @@ import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import AuthModal from './components/AuthModal';
+import AgeVerification from './components/AgeVerification';
 
 export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -46,6 +47,9 @@ export default function App() {
           isOpen={isAuthOpen} 
           onClose={() => setIsAuthOpen(false)} 
         />
+
+        {/* Age Verification Overlay Banner */}
+        <AgeVerification />
       </div>
     </CartProvider>
   );

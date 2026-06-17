@@ -37,3 +37,20 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #e9c176;
 }
+
+/* Luxury Fade In Animations */
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1.2s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(15px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}

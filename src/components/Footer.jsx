@@ -51,11 +51,11 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-xs" data-icon="call">call</span> 
-                +34 912 345 678
+                +57 (601) 727 2727
               </li>
-              <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-xs" data-icon="location_on">location_on</span> 
-                Madrid, España
+              <li className="flex items-center gap-3 items-start">
+                <span className="material-symbols-outlined text-xs mt-1" data-icon="location_on">location_on</span> 
+                <span>Carrera 26 # 71B-30, Bogotá, Colombia</span>
               </li>
             </ul>
           </div>
