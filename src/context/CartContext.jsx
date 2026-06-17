@@ -15,6 +15,7 @@ export const CartProvider = ({ children }) => {
     const localCart = localStorage.getItem('lemalua_cart');
     return localCart ? JSON.parse(localCart) : [];
   });
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     localStorage.setItem('lemalua_cart', JSON.stringify(cart));
@@ -29,6 +30,11 @@ export const CartProvider = ({ children }) => {
         );
       }
       return [...prevCart, { ...product, quantity: 1 }];
+    });
+    setToast({
+      id: Date.now(),
+      message: `¡${product.name} añadido al carrito!`,
+      image: product.image
     });
   };
 
@@ -66,6 +72,8 @@ export const CartProvider = ({ children }) => {
         clearCart,
         cartCount,
         cartTotal,
+        toast,
+        setToast,
       }}
     >
       {children}

@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Promotions from './components/Promotions';
 import MostWanted from './components/MostWanted';
+import Catalog from './components/Catalog';
 import BrandStory from './components/BrandStory';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
@@ -11,6 +12,7 @@ import CartDrawer from './components/CartDrawer';
 import AuthModal from './components/AuthModal';
 import AgeVerification from './components/AgeVerification';
 import ProductModal from './components/ProductModal';
+import ToastNotification from './components/ToastNotification';
 
 export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -31,33 +33,35 @@ export default function App() {
           <Hero />
           <Promotions onSelectProduct={setSelectedProduct} />
           <MostWanted onSelectProduct={setSelectedProduct} />
+          <Catalog onSelectProduct={setSelectedProduct} />
           <BrandStory />
           <Newsletter />
         </main>
 
-        {/* Footer */}
+        {/* Footer section */}
         <Footer />
 
-        {/* Cart Drawer */}
+        {/* Drawer & Modal views */}
         <CartDrawer 
           isOpen={isCartOpen} 
           onClose={() => setIsCartOpen(false)} 
         />
 
-        {/* Authentication Modal */}
         <AuthModal 
           isOpen={isAuthOpen} 
           onClose={() => setIsAuthOpen(false)} 
         />
 
-        {/* Product Detail Modal */}
-        <ProductModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
+        <ProductModal 
+          product={selectedProduct} 
+          onClose={() => setSelectedProduct(null)} 
         />
 
-        {/* Age Verification Overlay Banner */}
+        {/* Age Verification Gate */}
         <AgeVerification />
+
+        {/* Global Toast Notification */}
+        <ToastNotification />
       </div>
     </CartProvider>
   );

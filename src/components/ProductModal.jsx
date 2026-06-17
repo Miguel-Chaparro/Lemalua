@@ -54,7 +54,7 @@ export default function ProductModal({ product, onClose }) {
       addToCart({ ...product });
     }
     setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    handleClose();
   };
 
   if (!product) return null;

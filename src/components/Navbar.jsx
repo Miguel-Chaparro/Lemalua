@@ -6,11 +6,11 @@ export default function Navbar({ onOpenCart, onOpenAuth }) {
 
   return (
     <header className="fixed top-0 w-full bg-background/80 backdrop-blur-xl z-50 border-b border-outline-variant/30">
-      <nav className="flex justify-between items-center px-4 md:px-margin-desktop py-base max-w-container-max mx-auto">
-        <div className="flex items-center gap-12">
+      <nav className="flex justify-between items-center px-4 md:px-margin-desktop py-4 md:py-base max-w-container-max mx-auto">
+        <div className="flex items-center gap-4 md:gap-12">
           <span 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface uppercase tracking-widest cursor-pointer select-none"
+            className="font-display-lg text-2xl md:text-display-lg text-on-surface uppercase tracking-widest cursor-pointer select-none"
           >
             Lemalua
           </span>
@@ -41,7 +41,7 @@ export default function Navbar({ onOpenCart, onOpenAuth }) {
             </a>
           </div>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 md:gap-6">
           {/* Auth Button */}
           <button 
             onClick={onOpenAuth}
