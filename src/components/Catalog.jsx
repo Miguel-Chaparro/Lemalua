@@ -183,6 +183,7 @@ const initialProducts = [
 ];
 
 const categories = [
+  { id: 'todos', label: 'Todos', number: '00' },
   { id: 'whiskies', label: 'Whiskies', number: '01' },
   { id: 'ginebras', label: 'Ginebras', number: '02' },
   { id: 'tequilas', label: 'Tequilas & Mezcal', number: '03' },
@@ -193,10 +194,11 @@ const categories = [
 
 export default function Catalog({ onSelectProduct }) {
   const { addToCart } = useCart();
-  const [activeCategory, setActiveCategory] = useState('whiskies');
+  const [activeCategory, setActiveCategory] = useState('todos');
   const [sortBy, setSortBy] = useState('relevancia');
   const [addedProductIds, setAddedProductIds] = useState({});
-  
+  const mobileCatsRef = useRef(null);
+
   const sectionRefs = {
     whiskies: useRef(null),
     ginebras: useRef(null),
@@ -206,18 +208,41 @@ export default function Catalog({ onSelectProduct }) {
     raras: useRef(null)
   };
 
-  // ── Intersection Observer to highlight active category based on scroll ──
+  // ── Auto-scroll the mobile pill strip to keep active chip visible ──
+  const scrollMobileCatIntoView = (categoryId) => {
+    if (!mobileCatsRef.current) return;
+    const chip = mobileCatsRef.current.querySelector(`[data-cat-id="${categoryId}"]`);
+    if (chip) {
+      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  };
+
+  // ── Intersection Observer — only active when showing all products ──
   useEffect(() => {
+    // Only run scroll-spy in "todos" mode so that each section is rendered
+    if (activeCategory !== 'todos') return;
+
     const observerOptions = {
       root: null,
-      rootMargin: '-30% 0px -50% 0px', // Trigger when section is in the upper middle area of viewport
-      threshold: 0.05
+      rootMargin: '-20% 0px -55% 0px',
+      threshold: 0
     };
 
     const handleIntersection = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          setActiveCategory(entry.target.id);
+          scrollMobileCatIntoView(entry.target.id);
+          // Only update the visual highlight, don't change filter mode
+          setActiveCategory((prev) => {
+            // Keep 'todos' filter, but track which section we are in via a
+            // separate visual state — we reuse activeCategory for both.
+            // When in 'todos' mode the observer fires and sets category id,
+            // but we still show all sections (the conditional rendering
+            // treats any non-specific id the same as 'todos' unless it
+            // matches a section id precisely — so we switch to the section
+            // id here for highlighting only).
+            return entry.target.id;
+          });
         }
       });
     };
@@ -225,39 +250,66 @@ export default function Catalog({ onSelectProduct }) {
     const observer = new IntersectionObserver(handleIntersection, observerOptions);
 
     Object.values(sectionRefs).forEach((ref) => {
-      if (ref.current) {
-        observer.observe(ref.current);
-      }
+      if (ref.current) observer.observe(ref.current);
     });
 
     return () => {
       Object.values(sectionRefs).forEach((ref) => {
-        if (ref.current) {
-          observer.unobserve(ref.current);
-        }
+        if (ref.current) observer.unobserve(ref.current);
       });
     };
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCategory]);
+
+  // ── Track whether we are in 'todos' scroll mode or filtered mode ──
+  // When user is scrolling "todos", activeCategory will be set to a section id
+  // by the observer. We need to know if all sections should show.
+  const isFiltered = !Object.keys(sectionRefs).includes(activeCategory) && activeCategory !== 'todos';
+  // Section is visible if: todos-mode (observer just highlights) OR filtered to that section
+  const isSectionVisible = (sectionId) => {
+    if (activeCategory === 'todos') return true;
+    // observer set it to a specific section while in todos-scroll mode
+    if (Object.keys(sectionRefs).includes(activeCategory)) return true;
+    return activeCategory === sectionId;
+  };
 
   const handleCategoryClick = (categoryId, e) => {
     e.preventDefault();
-    setActiveCategory(categoryId);
-    const targetRef = sectionRefs[categoryId]?.current;
-    if (targetRef) {
-      const offset = 100; // Account for fixed navbar height
-      const targetPosition = targetRef.getBoundingClientRect().top + window.pageYOffset - offset;
-      window.scrollTo({
-        top: targetPosition,
-        behavior: 'smooth'
-      });
+
+    if (categoryId === 'todos') {
+      setActiveCategory('todos');
+      // Scroll to the top of the catalog area
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // If we're coming from 'todos' scroll mode, keep all sections visible
+    // but jump to that section
+    const currentlyInTodos =
+      activeCategory === 'todos' ||
+      Object.keys(sectionRefs).includes(activeCategory);
+
+    if (currentlyInTodos) {
+      // Jump to section without hiding others
+      setActiveCategory(categoryId);
+      const targetRef = sectionRefs[categoryId]?.current;
+      if (targetRef) {
+        // Offset: navbar (~68px) + mobile sticky bar (~52px) + extra buffer
+        const isMobile = window.innerWidth < 1024;
+        const offset = isMobile ? 130 : 100;
+        const targetPosition = targetRef.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+      }
+    } else {
+      // Filtered mode: switch filter and scroll to top of page
+      setActiveCategory(categoryId);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const handleAddToCartWithFeedback = (product, e) => {
     e.stopPropagation();
     addToCart(product);
-    
-    // Add success feedback state
     setAddedProductIds((prev) => ({ ...prev, [product.id]: true }));
     setTimeout(() => {
       setAddedProductIds((prev) => ({ ...prev, [product.id]: false }));
@@ -267,14 +319,9 @@ export default function Catalog({ onSelectProduct }) {
   // Get and sort products dynamically
   const getSortedProducts = (categoryKey) => {
     const filtered = initialProducts.filter(p => p.category === categoryKey);
-    
-    if (sortBy === 'price-asc') {
-      return [...filtered].sort((a, b) => a.price - b.price);
-    }
-    if (sortBy === 'price-desc') {
-      return [...filtered].sort((a, b) => b.price - a.price);
-    }
-    return filtered; // relevance / initial order
+    if (sortBy === 'price-asc') return [...filtered].sort((a, b) => a.price - b.price);
+    if (sortBy === 'price-desc') return [...filtered].sort((a, b) => b.price - a.price);
+    return filtered;
   };
 
   return (
@@ -289,11 +336,74 @@ export default function Catalog({ onSelectProduct }) {
         </div>
       </header>
 
+      {/* ── MOBILE STICKY CATEGORY BAR ── */}
+      <div className="lg:hidden sticky top-[68px] z-30 bg-background/95 backdrop-blur-md border-b border-outline-variant/15 shadow-lg shadow-background/50">
+        {/* Category pills */}
+        <div
+          ref={mobileCatsRef}
+          className="flex items-center gap-2 px-4 py-3 overflow-x-auto scrollbar-none"
+        >
+          {categories.map((cat) => {
+            const isActive = activeCategory === cat.id ||
+              (cat.id === 'todos' && activeCategory === 'todos');
+            // Highlight the correct pill in scroll-spy mode
+            const isHighlighted = activeCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                data-cat-id={cat.id}
+                onClick={(e) => handleCategoryClick(cat.id, e)}
+                className={`
+                  relative flex-shrink-0 px-4 py-1.5 rounded-full border text-label-md
+                  font-medium tracking-wide transition-all duration-300 whitespace-nowrap
+                  ${
+                    isHighlighted
+                      ? 'bg-secondary text-on-secondary border-secondary shadow-[0_0_12px_rgba(233,193,118,0.4)]'
+                      : 'bg-transparent text-on-surface-variant border-outline-variant/40 hover:border-secondary/60 hover:text-secondary'
+                  }
+                `}
+              >
+                {cat.label}
+                {/* Active indicator dot */}
+                {isHighlighted && (
+                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-secondary rounded-full animate-pulse" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Sort row on mobile */}
+        <div className="flex items-center gap-1 px-4 pb-2.5 overflow-x-auto scrollbar-none">
+          <span className="text-[11px] text-on-surface-variant uppercase tracking-widest flex-shrink-0 mr-1">Orden:</span>
+          {[
+            { id: 'relevancia', label: 'Relevancia' },
+            { id: 'price-asc', label: 'Precio ↑' },
+            { id: 'price-desc', label: 'Precio ↓' },
+          ].map((opt) => (
+            <button
+              key={opt.id}
+              onClick={() => setSortBy(opt.id)}
+              className={`
+                flex-shrink-0 px-3 py-1 rounded-full text-[11px] tracking-wide border transition-all duration-200
+                ${
+                  sortBy === opt.id
+                    ? 'bg-secondary/20 text-secondary border-secondary/50'
+                    : 'bg-transparent text-on-surface-variant border-outline-variant/30 hover:border-secondary/40 hover:text-secondary'
+                }
+              `}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Catalog Container */}
-      <div className="px-6 md:px-margin-desktop max-w-container-max mx-auto flex flex-col lg:flex-row gap-gutter py-12">
-        
-        {/* Filters Sidebar */}
-        <aside className="w-full lg:w-64 flex-shrink-0 space-y-10">
+      <div className="px-4 md:px-margin-desktop max-w-container-max mx-auto flex flex-col lg:flex-row gap-gutter py-8 lg:py-12">
+
+        {/* Filters Sidebar — desktop only */}
+        <aside className="hidden lg:block w-64 flex-shrink-0 space-y-10">
           <div className="sticky top-28">
             <h3 className="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant mb-6">
               Categorías
@@ -311,7 +421,7 @@ export default function Catalog({ onSelectProduct }) {
                       href={`#${cat.id}`}
                     >
                       {cat.label}
-                      <span 
+                      <span
                         className={`text-label-sm transition-all duration-300 ${
                           isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                         }`}
@@ -337,9 +447,7 @@ export default function Catalog({ onSelectProduct }) {
                     checked={sortBy === 'relevancia'}
                     onChange={() => setSortBy('relevancia')}
                   />
-                  <span className="text-label-md text-on-surface group-hover:text-secondary transition-colors">
-                    Relevancia
-                  </span>
+                  <span className="text-label-md text-on-surface group-hover:text-secondary transition-colors">Relevancia</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <input
@@ -349,9 +457,7 @@ export default function Catalog({ onSelectProduct }) {
                     checked={sortBy === 'price-asc'}
                     onChange={() => setSortBy('price-asc')}
                   />
-                  <span className="text-label-md text-on-surface group-hover:text-secondary transition-colors">
-                    Precio: Menor a Mayor
-                  </span>
+                  <span className="text-label-md text-on-surface group-hover:text-secondary transition-colors">Precio: Menor a Mayor</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <input
@@ -361,9 +467,7 @@ export default function Catalog({ onSelectProduct }) {
                     checked={sortBy === 'price-desc'}
                     onChange={() => setSortBy('price-desc')}
                   />
-                  <span className="text-label-md text-on-surface group-hover:text-secondary transition-colors">
-                    Precio: Mayor a Menor
-                  </span>
+                  <span className="text-label-md text-on-surface group-hover:text-secondary transition-colors">Precio: Mayor a Menor</span>
                 </label>
               </div>
             </div>
@@ -374,11 +478,12 @@ export default function Catalog({ onSelectProduct }) {
         <div className="flex-grow">
           
           {/* Section: Whiskies */}
-          <section 
-            id="whiskies" 
-            ref={sectionRefs.whiskies} 
-            className="mb-20 scroll-mt-24 transition-all duration-1000"
-          >
+          {isSectionVisible('whiskies') && (
+            <section
+              id="whiskies" 
+              ref={sectionRefs.whiskies} 
+              className="mb-20 scroll-mt-24 transition-all duration-1000"
+            >
             <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 mb-10 border-b border-outline-variant/10 pb-4">
               <h2 className="font-display-lg text-[32px] md:text-headline-md">Whiskies</h2>
               <p className="font-body-md text-on-surface-variant italic max-w-md">
@@ -446,13 +551,15 @@ export default function Catalog({ onSelectProduct }) {
               })}
             </div>
           </section>
+          )}
 
           {/* Section: Ginebras */}
-          <section 
-            id="ginebras" 
-            ref={sectionRefs.ginebras} 
-            className="mb-20 scroll-mt-24 transition-all duration-1000"
-          >
+          {isSectionVisible('ginebras') && (
+            <section
+              id="ginebras"
+              ref={sectionRefs.ginebras}
+              className="mb-20 scroll-mt-24 transition-all duration-1000"
+            >
             <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 mb-10 border-b border-outline-variant/10 pb-4">
               <h2 className="font-display-lg text-[32px] md:text-headline-md">Ginebras</h2>
               <p className="font-body-md text-on-surface-variant italic max-w-md">
@@ -508,13 +615,15 @@ export default function Catalog({ onSelectProduct }) {
               })}
             </div>
           </section>
+          )}
 
           {/* Section: Tequilas & Mezcal */}
-          <section 
-            id="tequilas" 
-            ref={sectionRefs.tequilas} 
-            className="mb-20 scroll-mt-24 transition-all duration-1000"
-          >
+          {isSectionVisible('tequilas') && (
+            <section
+              id="tequilas"
+              ref={sectionRefs.tequilas}
+              className="mb-20 scroll-mt-24 transition-all duration-1000"
+            >
             <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 mb-10 border-b border-outline-variant/10 pb-4">
               <h2 className="font-display-lg text-[32px] md:text-headline-md">Tequilas & Mezcal</h2>
               <p className="font-body-md text-on-surface-variant italic max-w-md">
@@ -570,13 +679,15 @@ export default function Catalog({ onSelectProduct }) {
               })}
             </div>
           </section>
+          )}
 
           {/* Section: Ron */}
-          <section 
-            id="ron" 
-            ref={sectionRefs.ron} 
-            className="mb-20 scroll-mt-24 transition-all duration-1000"
-          >
+          {isSectionVisible('ron') && (
+            <section
+              id="ron"
+              ref={sectionRefs.ron}
+              className="mb-20 scroll-mt-24 transition-all duration-1000"
+            >
             <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 mb-10 border-b border-outline-variant/10 pb-4">
               <h2 className="font-display-lg text-[32px] md:text-headline-md">Ron</h2>
               <p className="font-body-md text-on-surface-variant italic max-w-md">
@@ -632,13 +743,15 @@ export default function Catalog({ onSelectProduct }) {
               })}
             </div>
           </section>
+          )}
 
           {/* Section: Vinos */}
-          <section 
-            id="vinos" 
-            ref={sectionRefs.vinos} 
-            className="mb-20 scroll-mt-24 transition-all duration-1000"
-          >
+          {isSectionVisible('vinos') && (
+            <section
+              id="vinos"
+              ref={sectionRefs.vinos}
+              className="mb-20 scroll-mt-24 transition-all duration-1000"
+            >
             <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 mb-10 border-b border-outline-variant/10 pb-4">
               <h2 className="font-display-lg text-[32px] md:text-headline-md">Vinos</h2>
               <p className="font-body-md text-on-surface-variant italic max-w-md">
@@ -694,13 +807,15 @@ export default function Catalog({ onSelectProduct }) {
               })}
             </div>
           </section>
+          )}
 
           {/* Section: Ediciones Raras (Bento Grid Style) */}
-          <section 
-            id="raras" 
-            ref={sectionRefs.raras} 
-            className="mb-20 scroll-mt-24 transition-all duration-1000"
-          >
+          {isSectionVisible('raras') && (
+            <section
+              id="raras"
+              ref={sectionRefs.raras}
+              className="mb-20 scroll-mt-24 transition-all duration-1000"
+            >
             <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 mb-10 border-b border-outline-variant/10 pb-4">
               <h2 className="font-display-lg text-[32px] md:text-headline-md text-secondary">Ediciones Raras</h2>
               <p className="font-body-md text-on-surface-variant italic max-w-md">
@@ -801,6 +916,7 @@ export default function Catalog({ onSelectProduct }) {
               </div>
             </div>
           </section>
+          )}
 
         </div>
       </div>
