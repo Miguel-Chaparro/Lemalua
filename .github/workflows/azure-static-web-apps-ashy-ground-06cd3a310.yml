@@ -53,8 +53,7 @@ jobs:
           api_location: "" 
           output_location: "dist" 
           skip_app_build: true # Esto evita que Oryx intente compilar de nuevo
-          github_id_token: ${{ steps.idtoken.outputs.result }}
-          
+         
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
