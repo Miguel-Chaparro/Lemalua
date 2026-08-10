@@ -107,14 +107,14 @@ export default function Hero() {
       <div className="relative z-20 px-4 md:px-margin-desktop max-w-container-max mx-auto w-full">
         <div className="max-w-2xl space-y-8">
           <span className="font-label-md text-label-md text-secondary tracking-[0.2em] uppercase block">
-            Edición Limitada de Herencia
+            Boutique de Lujo & Pub a Domicilio
           </span>
           <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface leading-tight">
-            La esencia del <br />
-            <span className="italic text-secondary">tiempo destilado.</span>
+            La experiencia del pub, <br />
+            <span className="italic text-secondary">en la comodidad de tu casa.</span>
           </h1>
           <p className="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
-            Descubra una selección curada de los espirituosos más finos del mundo, elegidos por su carácter excepcional y artesanía inigualable.
+            Descubre nuestra selección curada de licores exclusivos, cervezas y platillos de pub. Lo mejor de ambos mundos, entregado donde tú elijas.
           </p>
 
           {/* CTAs */}
@@ -123,7 +123,7 @@ export default function Hero() {
               to="/catalogo"
               className="px-10 py-4 bg-transparent border border-secondary text-secondary font-label-md uppercase tracking-widest hover:bg-secondary hover:text-background transition-all duration-300 active:opacity-80 inline-block text-center"
             >
-              Explorar Colección
+              Pedir Domicilio
             </Link>
             <Link
               to="/historia"

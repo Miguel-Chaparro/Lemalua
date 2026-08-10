@@ -42,7 +42,7 @@ const socialLinks = [
 ];
 
 const navLinks = [
-  { label: 'Shop', to: '/catalogo', isRoute: true },
+  { label: 'Domicilios', to: '/catalogo', isRoute: true },
   { label: 'Promociones', to: '/promociones', isRoute: true },
   { label: 'Top Sellers', to: '/top-sellers', isRoute: true },
   { label: 'Nuestra Historia', to: '/historia', isRoute: true },
@@ -76,7 +76,7 @@ export default function Navbar({ onOpenCart, onOpenAuth }) {
             to="/"
             className="font-display-lg text-2xl md:text-display-lg text-on-surface uppercase tracking-widest cursor-pointer select-none"
           >
-            Lemalua
+            Lemalua Pub
           </Link>
 
           {/* Desktop nav links */}

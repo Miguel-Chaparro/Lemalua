@@ -16,12 +16,12 @@ export default function BrandStory() {
         </div>
         <div className="space-y-8 order-1 lg:order-2">
           <span className="font-label-md text-secondary tracking-[0.3em] uppercase">Legado y Pasión</span>
-          <h2 className="font-display-lg text-display-lg-mobile md:text-headline-md text-on-surface">Acerca de Lemalua</h2>
+          <h2 className="font-display-lg text-display-lg-mobile md:text-headline-md text-on-surface">Acerca de Lemalua Pub</h2>
           <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
-            En Lemalua, no solo vendemos espirituosos; preservamos historias. Nuestra curaduría nace de una búsqueda incansable por la perfección, desde las destilerías más remotas de las tierras altas hasta las bodegas familiares con siglos de tradición.
+            En Lemalua, no solo servimos tragos; llevamos la auténtica experiencia de un pub a tu puerta. Nuestra curaduría combina licores de lujo de destilerías exclusivas con lo mejor de la comida de pub, ofreciendo entregas a domicilio para tus mejores momentos.
           </p>
           <p className="font-body-md text-body-md text-on-surface-variant/80">
-            Cada botella en nuestra colección ha sido seleccionada por su integridad, complejidad y capacidad para elevar cualquier momento. Somos el punto de encuentro para quienes entienden que el lujo no es el precio, sino la experiencia de la maestría.
+            Cada producto en nuestra colección, desde una cerveza artesanal hasta un whisky de lujo o una picada, ha sido seleccionado para elevar tu experiencia. Somos el punto de encuentro para quienes buscan lo mejor del Pub, en la comodidad de su hogar.
           </p>
           <div className="pt-4">
             <a className="inline-flex items-center gap-4 text-secondary font-label-md uppercase tracking-widest group" href="#story">

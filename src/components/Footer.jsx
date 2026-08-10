@@ -28,10 +28,10 @@ export default function Footer() {
           {/* Column 1: Brand Info */}
           <div className="space-y-6">
             <span className="font-headline-md text-headline-md text-on-surface block uppercase tracking-widest">
-              Lemalua
+              Lemalua Pub
             </span>
             <p className="font-body-md text-on-surface-variant">
-              Destilando la esencia de lo extraordinario desde 1920. Nuestra pasión es la búsqueda incesante de la perfección en cada gota.
+              Destilando la esencia de lo extraordinario. Boutique de Lujo, cervezas y comida de Pub, directo a tu puerta con nuestro servicio de domicilios.
             </p>
             {/* Social Icons row */}
             <div className="flex gap-4">
@@ -188,7 +188,7 @@ export default function Footer() {
         {/* Footer bottom */}
         <div className="px-0 py-8 border-t border-outline-variant/10 max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <span className="font-body-md text-body-md text-on-surface-variant">
-            © 2024 Lemalua Spirits. All rights reserved.
+            © 2024 Lemalua Pub & Boutique. Todos los derechos reservados.
           </span>
           <div className="flex gap-6">
             <a className="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" href="#privacy">
