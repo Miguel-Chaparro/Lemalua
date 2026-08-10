@@ -59,8 +59,21 @@ export default function ProductModal({ product, onClose }) {
 
   if (!product) return null;
 
-  const discount = product.oldPrice
-    ? Math.round((1 - product.price / product.oldPrice) * 100)
+  // Normalizar campos: soporte para datos de API (precio_venta_base)
+  // y datos legacy del catálogo estático (price)
+  const price = Number(product.price ?? product.precio_venta_base ?? 0);
+  const oldPrice = product.oldPrice
+    ? Number(product.oldPrice)
+    : product.precio_anterior
+    ? Number(product.precio_anterior)
+    : null;
+  const name = product.name ?? product.nombre ?? '';
+  const image = product.image ?? product.foto_url ?? '';
+  const description = product.description ?? product.descripcion ?? '';
+  const category = product.category ?? product.categoria ?? product.categoria_nombre ?? null;
+
+  const discount = oldPrice && price
+    ? Math.round((1 - price / oldPrice) * 100)
     : null;
 
   // Build star icons
@@ -98,7 +111,7 @@ export default function ProductModal({ product, onClose }) {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={`Detalle de ${product.name}`}
+        aria-label={`Detalle de ${name}`}
         className="fixed inset-0 z-[9991] flex items-center justify-center p-4 md:p-8 pointer-events-none"
       >
         <div
@@ -134,15 +147,15 @@ export default function ProductModal({ product, onClose }) {
             </div>
 
             {/* Badge */}
-            {product.badge && (
+            {(product.badge) && (
               <span className="absolute top-5 left-5 z-10 bg-secondary text-primary-container font-label-sm text-label-sm px-3 py-1 uppercase tracking-widest">
                 {product.badge}
               </span>
             )}
 
             <img
-              src={product.image}
-              alt={product.name}
+              src={image}
+              alt={name}
               className="relative z-10 max-h-full w-full object-cover md:object-contain p-0 md:p-10"
               style={{
                 opacity: imageLoaded ? 1 : 0,
@@ -169,7 +182,7 @@ export default function ProductModal({ product, onClose }) {
               }}
             >
               <span className="font-label-sm text-label-sm text-secondary uppercase tracking-widest">
-                {product.category || 'Espirituoso Premium'}
+                {category || 'Espirituoso Premium'}
               </span>
               {product.rating && (
                 <div className="flex items-center gap-1">
@@ -190,7 +203,7 @@ export default function ProductModal({ product, onClose }) {
                 transition: 'opacity 0.45s 0.15s ease, transform 0.45s 0.15s ease',
               }}
             >
-              {product.name}
+              {name}
             </h2>
 
             {/* Description */}
@@ -202,7 +215,7 @@ export default function ProductModal({ product, onClose }) {
                 transition: 'opacity 0.45s 0.2s ease, transform 0.45s 0.2s ease',
               }}
             >
-              {product.description || 'Un espirituoso excepcional, elaborado con los más altos estándares de artesanía.'}
+              {description || 'Un espirituoso excepcional, elaborado con los más altos estándares de artesanía.'}
             </p>
 
             {/* Tags */}
@@ -241,12 +254,12 @@ export default function ProductModal({ product, onClose }) {
               }}
             >
               <span className="font-headline-md text-headline-md text-secondary">
-                ${product.price.toFixed(2)}
+                ${price.toFixed(2)}
               </span>
-              {product.oldPrice && (
+              {oldPrice && (
                 <>
                   <span className="font-body-md text-body-md text-on-surface-variant/50 line-through">
-                    ${product.oldPrice.toFixed(2)}
+                    ${oldPrice.toFixed(2)}
                   </span>
                   <span className="bg-secondary/10 text-secondary font-label-sm text-label-sm px-2 py-0.5 uppercase tracking-wider">
                     −{discount}%
@@ -319,7 +332,7 @@ export default function ProductModal({ product, onClose }) {
                   {added ? 'check_circle' : 'add_shopping_cart'}
                 </span>
                 <span className="relative z-10">
-                  {added ? `¡${quantity > 1 ? `${quantity} unidades` : 'Producto'} añadido!` : `Añadir al carrito · $${(product.price * quantity).toFixed(2)}`}
+                  {added ? `¡${quantity > 1 ? `${quantity} unidades` : 'Producto'} añadido!` : `Añadir al carrito · $${(price * quantity).toFixed(2)}`}
                 </span>
               </button>
 

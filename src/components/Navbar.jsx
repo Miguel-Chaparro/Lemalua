@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useCatalog } from '../context/CatalogContext';
 
 const socialLinks = [
   {
@@ -50,13 +51,28 @@ const navLinks = [
 
 export default function Navbar({ onOpenCart, onOpenAuth }) {
   const { cartCount } = useCart();
+  const { searchQuery, setSearchQuery } = useCatalog();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchInputRef = useRef(null);
 
-  // Cierra el menú cuando cambia la ruta
+  // Solo mostramos el buscador en la sección Domicilios (/catalogo)
+  const isCatalog = location.pathname === '/catalogo';
+
+  // Cierra el menú y el buscador cuando cambia la ruta
   useEffect(() => {
     setMenuOpen(false);
+    setSearchOpen(false);
+    setSearchQuery('');
   }, [location.pathname]);
+
+  // Foco automático al abrir el panel de búsqueda
+  useEffect(() => {
+    if (searchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [searchOpen]);
 
   // Bloquea scroll del body cuando el menú está abierto
   useEffect(() => {
@@ -65,6 +81,13 @@ export default function Navbar({ onOpenCart, onOpenAuth }) {
   }, [menuOpen]);
 
   const isActive = (path) => location.pathname === path;
+
+  const handleToggleSearch = () => {
+    if (searchOpen) {
+      setSearchQuery('');
+    }
+    setSearchOpen((prev) => !prev);
+  };
 
   return (
     <>
@@ -107,10 +130,21 @@ export default function Navbar({ onOpenCart, onOpenAuth }) {
               <span className="material-symbols-outlined">person</span>
             </button>
 
-            {/* Search — oculto en mobile */}
-            <button className="hidden md:flex hover:bg-surface-variant/10 p-2 transition-all duration-300 rounded-full items-center justify-center text-secondary">
-              <span className="material-symbols-outlined">search</span>
-            </button>
+            {/* Search — solo visible en sección Domicilios (/catalogo) */}
+            {isCatalog && (
+              <button
+                onClick={handleToggleSearch}
+                className={`flex hover:bg-surface-variant/10 p-2 transition-all duration-300 rounded-full items-center justify-center ${
+                  searchOpen ? 'text-secondary bg-secondary/10' : 'text-secondary'
+                }`}
+                title={searchOpen ? 'Cerrar búsqueda' : 'Buscar productos'}
+                aria-label={searchOpen ? 'Cerrar búsqueda' : 'Buscar productos'}
+              >
+                <span className="material-symbols-outlined">
+                  {searchOpen ? 'close' : 'search'}
+                </span>
+              </button>
+            )}
 
             {/* Cart — siempre visible */}
             <button
@@ -138,6 +172,43 @@ export default function Navbar({ onOpenCart, onOpenAuth }) {
             </button>
           </div>
         </nav>
+
+        {/* ── Panel de búsqueda — solo en /catalogo ── */}
+        {isCatalog && (
+          <div
+            className="overflow-hidden transition-all duration-300 ease-in-out border-t border-outline-variant/20"
+            style={{
+              maxHeight: searchOpen ? '72px' : '0px',
+              opacity: searchOpen ? 1 : 0,
+            }}
+          >
+            <div className="px-4 md:px-margin-desktop py-3 max-w-container-max mx-auto">
+              <div className="relative max-w-xl mx-auto">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg pointer-events-none">
+                  search
+                </span>
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Buscar por nombre, marca o categoría..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Escape') handleToggleSearch(); }}
+                  className="w-full bg-surface-container border border-outline-variant/30 text-on-surface pl-10 pr-10 py-2.5 focus:outline-none focus:border-secondary transition-colors rounded-lg text-sm"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-secondary transition-colors"
+                    aria-label="Limpiar búsqueda"
+                  >
+                    <span className="material-symbols-outlined text-lg">close</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Mobile full-screen menu overlay */}

@@ -5,12 +5,12 @@ import LoadingSpinner from './LoadingSpinner';
 
 export default function Catalog({ onSelectProduct }) {
   const { addToCart } = useCart();
-  const { categories, products, isLoadingInitial } = useCatalog();
+  const { categories, products, isLoadingInitial, searchQuery, setSearchQuery } = useCatalog();
   
   const [activeCategory, setActiveCategory] = useState('');
   const [sortBy, setSortBy] = useState('relevancia');
   const [addedProductIds, setAddedProductIds] = useState({});
-  const [searchQuery, setSearchQuery] = useState('');
+  // searchQuery vive en CatalogContext para ser controlado también desde Navbar
   
   const sectionRefs = useRef({});
   const mobileCatsRef = useRef(null);
@@ -75,14 +75,19 @@ export default function Catalog({ onSelectProduct }) {
     }, 2000);
   };
 
-  // Filtrado general de búsqueda
+  // Normaliza texto: elimina tildes/acentos para búsqueda flexible
+  const normalize = (str) =>
+    str ? str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() : '';
+
+  // Filtrado general de búsqueda con soporte de tildes
   const getFilteredProducts = () => {
     if (!searchQuery) return products;
-    const query = searchQuery.toLowerCase();
-    return products.filter(p => 
-      p.nombre?.toLowerCase().includes(query) || 
-      p.marca?.toLowerCase().includes(query) ||
-      p.descripcion?.toLowerCase().includes(query)
+    const query = normalize(searchQuery);
+    return products.filter(p =>
+      normalize(p.nombre).includes(query) ||
+      normalize(p.marca).includes(query) ||
+      normalize(p.descripcion).includes(query) ||
+      normalize(p.categoria_nombre).includes(query)
     );
   };
 

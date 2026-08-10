@@ -7,6 +7,7 @@ export function CatalogProvider({ children }) {
   const [products, setProducts] = useState([]);
   const [isLoadingInitial, setIsLoadingInitial] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // useRef para evitar llamadas simultáneas al cargar páginas en segundo plano
   const fetchingRef = useRef(false);
@@ -84,7 +85,7 @@ export function CatalogProvider({ children }) {
   }, []);
 
   return (
-    <CatalogContext.Provider value={{ categories, products, isLoadingInitial, error }}>
+    <CatalogContext.Provider value={{ categories, products, isLoadingInitial, error, searchQuery, setSearchQuery }}>
       {children}
     </CatalogContext.Provider>
   );
