@@ -168,8 +168,8 @@ export default function CartPage({ onClose }) {
                     {/* Product Image */}
                     <div className="w-full sm:w-44 h-52 sm:h-44 bg-surface-container overflow-hidden rounded-lg flex-shrink-0">
                       <img
-                        src={item.image}
-                        alt={item.name}
+                        src={item.image ?? item.foto_url ?? ''}
+                        alt={item.name ?? item.nombre ?? ''}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         style={{ opacity: 0, transition: 'opacity 0.8s ease' }}
                         onLoad={(e) => { e.target.style.opacity = '1'; }}
@@ -181,23 +181,23 @@ export default function CartPage({ onClose }) {
                       <div>
                         <div className="flex justify-between items-start gap-4">
                           <h3 className="font-headline-sm text-headline-sm text-on-surface leading-tight">
-                            {item.name}
+                            {item.name ?? item.nombre ?? ''}
                           </h3>
                           <span className="font-label-md text-label-md text-on-surface whitespace-nowrap">
-                            ${(item.price * item.quantity).toFixed(2)}
+                            ${(Number(item.price ?? item.precio_venta_base ?? 0) * item.quantity).toFixed(2)}
                           </span>
                         </div>
 
                         {/* Description */}
-                        {item.description && (
+                        {(item.description ?? item.descripcion) && (
                           <p className="font-body-md text-body-md text-on-surface-variant mt-2">
-                            {item.description}
+                            {item.description ?? item.descripcion}
                           </p>
                         )}
 
                         {/* Unit Price */}
                         <p className="font-label-sm text-label-sm text-secondary mt-1 uppercase tracking-wider">
-                          ${item.price.toFixed(2)} / unidad
+                          ${Number(item.price ?? item.precio_venta_base ?? 0).toFixed(2)} / unidad
                         </p>
 
                         {/* Tags */}
@@ -377,9 +377,9 @@ export default function CartPage({ onClose }) {
                   {cart.map((item) => (
                     <div key={item.id} className="flex items-center gap-3 py-1">
                       <div className="w-8 h-8 rounded overflow-hidden bg-surface-container flex-shrink-0">
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        <img src={item.image ?? item.foto_url ?? ''} alt={item.name ?? item.nombre ?? ''} className="w-full h-full object-cover" />
                       </div>
-                      <span className="flex-1 font-label-sm text-label-sm text-on-surface-variant truncate">{item.name}</span>
+                      <span className="flex-1 font-label-sm text-label-sm text-on-surface-variant truncate">{item.name ?? item.nombre ?? ''}</span>
                       <span className="font-label-sm text-label-sm text-secondary">×{item.quantity}</span>
                     </div>
                   ))}

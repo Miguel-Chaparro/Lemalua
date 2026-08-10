@@ -22,19 +22,29 @@ export const CartProvider = ({ children }) => {
   }, [cart]);
 
   const addToCart = (product) => {
+    // Normalizar campos: soporta productos de la API (precio_venta_base, nombre, foto_url)
+    // y productos del catálogo estático (price, name, image)
+    const normalizedProduct = {
+      ...product,
+      price: Number(product.price ?? product.precio_venta_base ?? 0),
+      name: product.name ?? product.nombre ?? '',
+      image: product.image ?? product.foto_url ?? '',
+      description: product.description ?? product.descripcion ?? '',
+    };
+
     setCart((prevCart) => {
-      const existingProduct = prevCart.find((item) => item.id === product.id);
+      const existingProduct = prevCart.find((item) => item.id === normalizedProduct.id);
       if (existingProduct) {
         return prevCart.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === normalizedProduct.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      return [...prevCart, { ...product, quantity: 1 }];
+      return [...prevCart, { ...normalizedProduct, quantity: 1 }];
     });
     setToast({
       id: Date.now(),
-      message: `¡${product.name} añadido al carrito!`,
-      image: product.image
+      message: `¡${normalizedProduct.name} añadido al carrito!`,
+      image: normalizedProduct.image,
     });
   };
 
@@ -60,7 +70,8 @@ export const CartProvider = ({ children }) => {
 
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
   
-  const cartTotal = cart.reduce((total, item) => total + item.quantity * item.price, 0);
+  // cartTotal usa price normalizado; Number() como guarda por si hay items legacy en localStorage
+  const cartTotal = cart.reduce((total, item) => total + item.quantity * Number(item.price ?? item.precio_venta_base ?? 0), 0);
 
   return (
     <CartContext.Provider

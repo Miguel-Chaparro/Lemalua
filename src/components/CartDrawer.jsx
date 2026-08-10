@@ -109,25 +109,25 @@ export default function CartDrawer({ isOpen, onClose }) {
                   {/* Thumbnail */}
                   <div className="w-20 h-20 bg-surface flex-shrink-0 rounded-md overflow-hidden">
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={item.image ?? item.foto_url ?? ''}
+                      alt={item.name ?? item.nombre ?? ''}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
 
                   {/* Info */}
                   <div className="flex-grow min-w-0">
-                    <h4 className="font-label-md text-on-surface truncate">{item.name}</h4>
-                    {item.description && (
+                    <h4 className="font-label-md text-on-surface truncate">{item.name ?? item.nombre ?? ''}</h4>
+                    {(item.description ?? item.descripcion) && (
                       <p className="text-[11px] text-on-surface-variant mt-0.5 line-clamp-1 opacity-70">
-                        {item.description}
+                        {item.description ?? item.descripcion}
                       </p>
                     )}
                     <p className="text-secondary text-sm font-semibold mt-1">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ${(Number(item.price ?? item.precio_venta_base ?? 0) * item.quantity).toFixed(2)}
                       {item.quantity > 1 && (
                         <span className="text-on-surface-variant font-normal ml-1 text-xs">
-                          (${item.price.toFixed(2)} c/u)
+                          (${Number(item.price ?? item.precio_venta_base ?? 0).toFixed(2)} c/u)
                         </span>
                       )}
                     </p>
