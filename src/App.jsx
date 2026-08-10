@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
+import { CatalogProvider } from './context/CatalogContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
@@ -23,8 +24,9 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   return (
-    <CartProvider>
-      <div className="min-h-screen bg-background text-on-surface font-body-md selection:bg-secondary selection:text-primary-container">
+    <CatalogProvider>
+      <CartProvider>
+        <div className="min-h-screen bg-background text-on-surface font-body-md selection:bg-secondary selection:text-primary-container">
 
         {/* Navbar global */}
         <Navbar
@@ -54,6 +56,7 @@ export default function App() {
         <ToastNotification />
         <WhatsAppButton />
       </div>
-    </CartProvider>
+      </CartProvider>
+    </CatalogProvider>
   );
 }
