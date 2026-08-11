@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
 import { useCatalog } from '../context/CatalogContext';
 import LoadingSpinner from './LoadingSpinner';
@@ -14,6 +14,7 @@ export default function Catalog({ onSelectProduct }) {
   
   const sectionRefs = useRef({});
   const mobileCatsRef = useRef(null);
+  const mobileCatBtnRefs = useRef({});
 
   // Inicializar categoría activa cuando se carguen
   useEffect(() => {
@@ -48,6 +49,18 @@ export default function Catalog({ onSelectProduct }) {
 
     return () => observer.disconnect();
   }, [categories, searchQuery]);
+
+  // ── Auto-scroll de la barra mobile para centrar la categoría activa ──
+  useEffect(() => {
+    if (!activeCategory || !mobileCatsRef.current) return;
+    const activeBtn = mobileCatBtnRefs.current[activeCategory];
+    if (!activeBtn) return;
+    activeBtn.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'center',
+    });
+  }, [activeCategory]);
 
   const handleCategoryClick = (categoryId, e) => {
     e.preventDefault();
@@ -135,6 +148,7 @@ export default function Catalog({ onSelectProduct }) {
             return (
               <button
                 key={cat.id}
+                ref={(el) => (mobileCatBtnRefs.current[cat.id.toString()] = el)}
                 data-cat-id={cat.id}
                 onClick={(e) => handleCategoryClick(cat.id, e)}
                 className={`
@@ -356,18 +370,46 @@ export default function Catalog({ onSelectProduct }) {
   );
 }
 
+/* Componente Auxiliar: Skeleton shimmer para imágenes */
+function ImageSkeleton() {
+  return (
+    <div className="absolute inset-0 z-10 overflow-hidden bg-surface-container">
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(233,193,118,0.08) 50%, transparent 100%)',
+          backgroundSize: '200% 100%',
+          animation: 'img-shimmer 1.6s ease-in-out infinite',
+        }}
+      />
+      {/* Líneas de skeleton */}
+      <div className="absolute bottom-0 left-0 w-full p-4 space-y-2">
+        <div className="h-2 w-2/3 rounded-full bg-outline-variant/20" />
+        <div className="h-2 w-1/2 rounded-full bg-outline-variant/10" />
+      </div>
+    </div>
+  );
+}
+
 /* Componente Auxiliar: Tarjeta de Producto Estándar */
 function ProductCard({ product, isAdded, onSelectProduct, handleAddToCartWithFeedback }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
+
   return (
     <div 
       className="bottle-card group cursor-pointer"
       onClick={() => onSelectProduct(product)}
     >
       <div className="relative bg-surface-container aspect-[3/4] overflow-hidden mb-4 border border-outline-variant/10 group-hover:border-secondary/30 transition-all duration-500">
+        {/* Skeleton visible mientras carga */}
+        {!imgLoaded && <ImageSkeleton />}
         <img
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${
+            imgLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
           src={product.foto_url}
           alt={product.nombre}
+          onLoad={() => setImgLoaded(true)}
         />
         <div className="quick-add absolute bottom-0 left-0 w-full p-4 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
           <button 
@@ -409,6 +451,33 @@ function ProductCard({ product, isAdded, onSelectProduct, handleAddToCartWithFee
   );
 }
 
+/* Imagen con fade-in para el Bento Grid */
+function BentoImage({ src, alt, className }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <>
+      {!loaded && (
+        <div className="absolute inset-0 bg-surface-container overflow-hidden">
+          <div
+            style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(90deg, transparent 0%, rgba(233,193,118,0.08) 50%, transparent 100%)',
+              backgroundSize: '200% 100%',
+              animation: 'img-shimmer 1.6s ease-in-out infinite',
+            }}
+          />
+        </div>
+      )}
+      <img
+        src={src}
+        alt={alt}
+        className={`${className} transition-opacity duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+        onLoad={() => setLoaded(true)}
+      />
+    </>
+  );
+}
+
 /* Componente Auxiliar: Grid Bento para Colecciones Especiales (Temporada/Raras) */
 function BentoGrid({ products, addedProductIds, onSelectProduct, handleAddToCartWithFeedback }) {
   if (!products || products.length === 0) return null;
@@ -426,11 +495,7 @@ function BentoGrid({ products, addedProductIds, onSelectProduct, handleAddToCart
           className="relative h-[600px] bg-surface-container border border-secondary/20 overflow-hidden group cursor-pointer"
         >
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10" />
-          <img
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-            src={bentoProduct.foto_url}
-            alt={bentoProduct.nombre}
-          />
+          <BentoImage src={bentoProduct.foto_url} alt={bentoProduct.nombre} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
           <div className="absolute bottom-0 left-0 w-full p-8 z-20 space-y-4">
             <div className="flex items-center gap-2 text-secondary">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -470,15 +535,16 @@ function BentoGrid({ products, addedProductIds, onSelectProduct, handleAddToCart
                   className="relative bg-surface-container border border-outline-variant/10 overflow-hidden group p-8 flex flex-col justify-end cursor-pointer h-[290px] md:h-auto"
                 >
                   {isSecond ? (
-                    <div 
-                      className="absolute inset-0 bg-cover bg-center opacity-20 transition-transform duration-700 group-hover:scale-105"
-                      style={{ backgroundImage: `url('${product.foto_url}')` }}
-                    />
-                  ) : (
-                    <img
-                      className="absolute top-0 right-0 w-1/2 h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-700"
+                    <BentoImage
                       src={product.foto_url}
                       alt={product.nombre}
+                      className="absolute inset-0 w-full h-full object-cover opacity-20 transition-transform duration-700 group-hover:scale-105"
+                    />
+                  ) : (
+                    <BentoImage
+                      src={product.foto_url}
+                      alt={product.nombre}
+                      className="absolute top-0 right-0 w-1/2 h-full object-cover opacity-40 group-hover:scale-110 transition-transform duration-700"
                     />
                   )}
                   
