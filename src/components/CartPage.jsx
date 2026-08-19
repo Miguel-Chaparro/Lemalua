@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
+import AddressSection from './AddressSection';
 
 const TAX_RATE = 0.08;
 const FREE_SHIPPING_THRESHOLD = 100;
@@ -11,6 +12,15 @@ export default function CartPage({ onClose }) {
   const [promoError, setPromoError] = useState('');
   const [checkoutDone, setCheckoutDone] = useState(false);
   const [removingId, setRemovingId] = useState(null);
+
+  // ─── Delivery address state ───────────────────────────────────────────────
+  const [deliveryAddress, setDeliveryAddress] = useState(null);
+  const [deliveryValid, setDeliveryValid] = useState(false);
+
+  const handleAddressValidated = useCallback((address, isValid) => {
+    setDeliveryAddress(address);
+    setDeliveryValid(isValid);
+  }, []);
 
   // Scroll to top on mount
   useEffect(() => {
@@ -46,6 +56,7 @@ export default function CartPage({ onClose }) {
   };
 
   const handleCheckout = () => {
+    if (!deliveryValid) return;
     // Persist the final order snapshot to localStorage
     const order = {
       id: `ORD-${Date.now()}`,
@@ -56,6 +67,7 @@ export default function CartPage({ onClose }) {
       taxes: taxes.toFixed(2),
       shipping: shipping === 0 ? 'Gratis' : `$${shipping.toFixed(2)}`,
       total: orderTotal.toFixed(2),
+      deliveryAddress,
     };
     const prevOrders = JSON.parse(localStorage.getItem('lemalua_orders') || '[]');
     localStorage.setItem('lemalua_orders', JSON.stringify([...prevOrders, order]));
@@ -310,8 +322,13 @@ export default function CartPage({ onClose }) {
                   </div>
                 </div>
 
+                {/* ─── Delivery Address Section ─── */}
+                <div className="border-t border-outline-variant/20 pt-5">
+                  <AddressSection onAddressValidated={handleAddressValidated} />
+                </div>
+
                 {/* Promo Code */}
-                <div>
+                <div className="border-t border-outline-variant/20 pt-5">
                   <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" htmlFor="promo-input">
                     Código de Descuento
                   </label>
@@ -350,11 +367,32 @@ export default function CartPage({ onClose }) {
                 <button
                   onClick={handleCheckout}
                   id="btn-checkout"
-                  className="w-full bg-[#1c1c1c] border border-secondary text-secondary py-4 font-label-md text-label-md uppercase tracking-widest hover:bg-secondary/10 active:opacity-80 transition-all duration-300 relative group overflow-hidden rounded-sm"
+                  disabled={!deliveryValid}
+                  title={!deliveryValid ? 'Ingresa una dirección de entrega válida para continuar' : ''}
+                  className={`w-full border py-4 font-label-md text-label-md uppercase tracking-widest transition-all duration-300 relative group overflow-hidden rounded-sm ${
+                    deliveryValid
+                      ? 'bg-[#1c1c1c] border-secondary text-secondary hover:bg-secondary/10 active:opacity-80 cursor-pointer'
+                      : 'bg-surface-container border-outline-variant/30 text-on-surface-variant/40 cursor-not-allowed'
+                  }`}
                 >
-                  <span className="relative z-10">Finalizar Compra</span>
-                  <div className="absolute inset-0 bg-secondary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    {!deliveryValid && (
+                      <span className="material-symbols-outlined text-base">lock</span>
+                    )}
+                    Finalizar Compra
+                  </span>
+                  {deliveryValid && (
+                    <div className="absolute inset-0 bg-secondary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                  )}
                 </button>
+
+                {/* Address hint when not yet validated */}
+                {!deliveryValid && (
+                  <p className="text-center font-label-sm text-label-sm text-on-surface-variant/50 flex items-center justify-center gap-1.5">
+                    <span className="material-symbols-outlined text-sm">location_on</span>
+                    Confirma tu dirección para habilitar el pago
+                  </p>
+                )}
 
                 {/* Shipping Notice */}
                 {shipping > 0 && (
