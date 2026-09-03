@@ -96,117 +96,251 @@ export default function HomePage({ onSelectProduct }) {
         </div>
       </section>
 
-      {/* ─── Sección de Reserva ─── */}
+      {/* ─── Sección de Reserva — Versión Premium ─── */}
       <section
         id="reserva"
-        className="relative overflow-hidden py-20 px-4 md:px-margin-desktop border-t border-outline-variant/10"
-        style={{
-          background: 'linear-gradient(135deg, #0f1010 0%, #1a1505 50%, #0f1010 100%)',
-        }}
+        className="relative overflow-hidden border-t border-outline-variant/10"
+        style={{ background: 'linear-gradient(160deg, #0a0b0b 0%, #130f02 40%, #1a1505 60%, #0a0b0b 100%)' }}
       >
-        {/* Glow decorativo */}
-        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-secondary/8 rounded-full blur-3xl" />
-        <div className="pointer-events-none absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full blur-2xl" />
+        {/* Glows ambientales */}
+        <div className="pointer-events-none absolute top-0 left-1/4 w-[500px] h-[500px] bg-secondary/6 rounded-full blur-[100px]" />
+        <div className="pointer-events-none absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-secondary/4 rounded-full blur-[80px]" />
+        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-px h-[80%] bg-gradient-to-b from-transparent via-secondary/10 to-transparent hidden lg:block" />
 
-        <div className="relative max-w-container-max mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        {/* ── Encabezado principal ── */}
+        <div className="relative max-w-container-max mx-auto px-4 md:px-margin-desktop pt-20 pb-16 text-center">
+          <span className="inline-flex items-center gap-2 font-label-sm text-label-sm text-secondary uppercase tracking-[0.25em] mb-5">
+            <span className="w-8 h-px bg-secondary/60" />
+            Espacios & Eventos
+            <span className="w-8 h-px bg-secondary/60" />
+          </span>
+          <h2 className="font-display-lg text-4xl md:text-6xl text-on-surface leading-tight mb-6">
+            Un escenario único para<br />
+            <span className="text-secondary italic">momentos extraordinarios</span>
+          </h2>
+          <p className="font-body-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
+            Lemalua Pub & Boutique es el destino perfecto para quienes buscan una experiencia diferente.
+            Contamos con espacios diseñados para eventos privados, reuniones corporativas y celebraciones especiales
+            en un ambiente de lujo, sofisticación y calidez incomparables.
+          </p>
 
-            {/* Texto */}
-            <div className="space-y-6">
-              <span className="font-label-sm text-label-sm text-secondary uppercase tracking-[0.2em] block">
-                Reserva de Sitio
-              </span>
-              <h2 className="font-display-lg text-3xl md:text-5xl text-on-surface leading-tight">
-                Vive la experiencia{' '}
-                <span className="text-secondary italic">Lemalua</span>
-              </h2>
-              <p className="font-body-lg text-on-surface-variant leading-relaxed max-w-lg">
-                Reserva tu lugar en nuestro Pub & Boutique para una velada inigualable. Música en vivo, los mejores licores de la casa y una atmósfera única que no encontrarás en ningún otro lugar.
-              </p>
+          {/* Dirección destacada */}
+          <a
+            href="https://maps.google.com/?q=Carrera+26+%2371b-30+Bogotá"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-6 px-6 py-3 border border-secondary/30 rounded-full text-secondary hover:bg-secondary/10 transition-all duration-300 group"
+          >
+            <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
+              location_on
+            </span>
+            <span className="font-label-md text-label-md uppercase tracking-widest">
+              Carrera 26 # 71b – 30
+            </span>
+            <span className="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
+              north_east
+            </span>
+          </a>
+        </div>
 
-              {/* Características */}
-              <ul className="space-y-4">
-                {[
-                  { icon: 'groups', text: 'Capacidad para grupos de hasta 20 personas' },
-                  { icon: 'restaurant', text: 'Menú exclusivo · Coctelería artesanal' },
-                  { icon: 'music_note', text: 'Ambiente premium con música en vivo' },
-                  { icon: 'star', text: 'Atención personalizada para tu evento' },
-                ].map((feat, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <span
-                      className="material-symbols-outlined text-secondary flex-shrink-0"
-                      style={{ fontSize: 20, fontVariationSettings: "'FILL' 1" }}
-                    >
-                      {feat.icon}
-                    </span>
-                    <span className="font-body-md text-on-surface-variant">{feat.text}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA Button */}
-              <button
-                id="btn-open-reserva"
-                onClick={() => setShowReserva(true)}
-                className="group relative inline-flex items-center gap-3 px-10 py-4 bg-secondary text-background font-label-md uppercase tracking-widest hover:bg-secondary/90 transition-all duration-300 rounded-sm shadow-lg shadow-secondary/20 active:scale-[0.98] overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                <span className="material-symbols-outlined text-base relative z-10">event_available</span>
-                <span className="relative z-10">Reservar Ahora</span>
-              </button>
+        {/* ── Stats de credibilidad ── */}
+        <div className="relative border-y border-outline-variant/15 bg-surface-container-lowest/40 backdrop-blur-sm">
+          <div className="max-w-container-max mx-auto px-4 md:px-margin-desktop py-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              {[
+                { value: '+500', label: 'Eventos Realizados', icon: 'celebration' },
+                { value: '20', label: 'Personas por Reserva', icon: 'groups' },
+                { value: '5★', label: 'Calificación Promedio', icon: 'star' },
+                { value: '100%', label: 'Satisfacción Garantizada', icon: 'verified' },
+              ].map((stat, i) => (
+                <div key={i} className="flex flex-col items-center gap-2 group">
+                  <span
+                    className="material-symbols-outlined text-secondary/60 group-hover:text-secondary transition-colors duration-300"
+                    style={{ fontSize: 28, fontVariationSettings: "'FILL' 1" }}
+                  >
+                    {stat.icon}
+                  </span>
+                  <span className="font-display-lg text-3xl md:text-4xl text-secondary font-bold">{stat.value}</span>
+                  <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest text-xs">{stat.label}</span>
+                </div>
+              ))}
             </div>
+          </div>
+        </div>
 
-            {/* Card visual */}
-            <div className="relative">
-              <div className="relative bg-surface-container border border-secondary/20 rounded-xl p-8 space-y-6 shadow-2xl">
-                {/* Decoración */}
-                <div className="absolute top-0 right-0 w-24 h-24 border-t-2 border-r-2 border-secondary/30 rounded-tr-xl" />
-                <div className="absolute bottom-0 left-0 w-24 h-24 border-b-2 border-l-2 border-secondary/10 rounded-bl-xl" />
-
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-secondary/10 border border-secondary/30 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      wine_bar
+        {/* ── Tipos de eventos ── */}
+        <div className="relative max-w-container-max mx-auto px-4 md:px-margin-desktop py-16">
+          <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-[0.2em] text-center mb-10">
+            Tipos de Eventos que Organizamos
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              {
+                icon: 'business_center',
+                title: 'Reuniones Corporativas',
+                desc: 'Espacios privados ideales para juntas directivas, team buildings, lanzamientos de producto y celebraciones empresariales de alto nivel.',
+                tag: 'Empresarial',
+              },
+              {
+                icon: 'celebration',
+                title: 'Cumpleaños & Aniversarios',
+                desc: 'Celebra los momentos más especiales rodeado de las personas que amas, con un servicio personalizado que supera todas las expectativas.',
+                tag: 'Celebración',
+              },
+              {
+                icon: 'groups',
+                title: 'Eventos Privados',
+                desc: 'Despedidas de soltero, reuniones de amigos, despedidas de año y cualquier celebración que merezca un espacio exclusivo e íntimo.',
+                tag: 'Privado',
+              },
+              {
+                icon: 'handshake',
+                title: 'Networking Empresarial',
+                desc: 'El ambiente perfecto para conectar con colegas y socios estratégicos en un entorno relajado, sofisticado y memorable.',
+                tag: 'Networking',
+              },
+              {
+                icon: 'wine_bar',
+                title: 'Catas & Degustaciones',
+                desc: 'Experiencias guiadas por nuestros expertos en destilados, vinos y coctelería premium. Una experiencia sensorial incomparable.',
+                tag: 'Premium',
+              },
+              {
+                icon: 'favorite',
+                title: 'Fechas Especiales',
+                desc: 'San Valentín, propuestas de matrimonio, graduaciones y toda ocasión que merece ser celebrada con elegancia y detalle.',
+                tag: 'Especial',
+              },
+            ].map((ev, i) => (
+              <div
+                key={i}
+                className="group relative bg-surface-container border border-outline-variant/15 rounded-xl p-7 hover:border-secondary/40 transition-all duration-500 hover:bg-surface-container-high cursor-default overflow-hidden"
+              >
+                {/* Corner glow on hover */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/0 group-hover:bg-secondary/5 rounded-bl-full transition-all duration-700" />
+                {/* Tag */}
+                <span className="inline-block px-3 py-1 border border-secondary/30 text-secondary font-label-sm text-[10px] uppercase tracking-widest rounded-full mb-5">
+                  {ev.tag}
+                </span>
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-lg bg-secondary/10 border border-secondary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-secondary/20 transition-colors duration-300">
+                    <span
+                      className="material-symbols-outlined text-secondary"
+                      style={{ fontSize: 22, fontVariationSettings: "'FILL' 1" }}
+                    >
+                      {ev.icon}
                     </span>
                   </div>
                   <div>
-                    <p className="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Lemalua Pub</p>
-                    <p className="font-body-md text-on-surface-variant text-sm">Reserva Premium</p>
+                    <h3 className="font-headline-sm text-on-surface group-hover:text-secondary transition-colors duration-300 mb-2 leading-tight">
+                      {ev.title}
+                    </h3>
+                    <p className="font-body-md text-on-surface-variant text-sm leading-relaxed">
+                      {ev.desc}
+                    </p>
                   </div>
                 </div>
-
-                <div className="space-y-3 border-t border-outline-variant/20 pt-5">
-                  {[
-                    { label: 'Horario', value: 'Lun – Dom · 12 PM – 11 PM' },
-                    { label: 'Capacidad', value: 'Hasta 20 personas' },
-                    { label: 'Reservas', value: 'Sujeto a disponibilidad' },
-                    { label: 'Confirmación', value: 'En horario hábil de oficina' },
-                  ].map((item) => (
-                    <div key={item.label} className="flex justify-between items-center">
-                      <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide text-xs">
-                        {item.label}
-                      </span>
-                      <span className="font-body-md text-on-surface text-sm text-right">
-                        {item.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => setShowReserva(true)}
-                  className="w-full py-3 border border-secondary text-secondary font-label-md uppercase tracking-widest hover:bg-secondary/10 transition-all rounded-sm text-sm flex items-center justify-center gap-2"
-                >
-                  <span className="material-symbols-outlined text-base">calendar_month</span>
-                  Seleccionar Fecha
-                </button>
               </div>
+            ))}
+          </div>
+        </div>
 
-              {/* Badge flotante */}
-              <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-secondary flex flex-col items-center justify-center shadow-lg shadow-secondary/30 animate-[pulse_3s_ease-in-out_infinite]">
-                <span className="font-label-sm text-[10px] text-background uppercase tracking-wider leading-tight text-center">
-                  Reserva<br />gratis
+        {/* ── CTA Principal + Info del sitio ── */}
+        <div className="relative max-w-container-max mx-auto px-4 md:px-margin-desktop pb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-stretch">
+
+            {/* Info del sitio — 2 columnas */}
+            <div className="lg:col-span-2 bg-surface-container border border-outline-variant/20 rounded-xl p-8 space-y-6">
+              {/* Header */}
+              <div className="flex items-center gap-4 pb-5 border-b border-outline-variant/20">
+                <div className="w-12 h-12 rounded-full bg-secondary/10 border border-secondary/30 flex items-center justify-center flex-shrink-0">
+                  <span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    store
+                  </span>
+                </div>
+                <div>
+                  <p className="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Lemalua Pub & Boutique</p>
+                  <p className="font-body-md text-on-surface-variant text-sm">Bogotá, Colombia</p>
+                </div>
+              </div>
+              {/* Detalles */}
+              <div className="space-y-4">
+                {[
+                  { icon: 'location_on', label: 'Ubicación', value: 'Cra. 26 # 71b – 30, Bogotá' },
+                  { icon: 'schedule', label: 'Horario', value: 'Lun – Dom · 12:00 PM – 11:00 PM' },
+                  { icon: 'groups', label: 'Aforo Máximo', value: 'Hasta 20 personas por reserva' },
+                  { icon: 'phone', label: 'Contacto', value: '+57 301 219 3083' },
+                  { icon: 'mark_email_read', label: 'Respuesta', value: 'Horario hábil · Lun – Vie 8am–6pm' },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-start gap-3">
+                    <span
+                      className="material-symbols-outlined text-secondary flex-shrink-0 mt-0.5"
+                      style={{ fontSize: 18, fontVariationSettings: "'FILL' 1" }}
+                    >
+                      {item.icon}
+                    </span>
+                    <div>
+                      <p className="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-widest">{item.label}</p>
+                      <p className="font-body-md text-on-surface text-sm mt-0.5">{item.value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA — 3 columnas */}
+            <div className="lg:col-span-3 relative bg-surface-container border border-secondary/20 rounded-xl p-8 md:p-10 flex flex-col justify-between gap-8 overflow-hidden">
+              {/* Fondo decorativo */}
+              <div className="pointer-events-none absolute inset-0 opacity-5"
+                style={{ backgroundImage: 'radial-gradient(circle at 70% 30%, #e9c176 0%, transparent 60%)' }}
+              />
+              <div className="relative space-y-4">
+                <span className="font-label-sm text-label-sm text-secondary uppercase tracking-[0.2em]">
+                  ¿Listo para reservar?
                 </span>
+                <h3 className="font-display-lg text-3xl md:text-4xl text-on-surface leading-tight">
+                  Asegura tu espacio<br />
+                  <span className="text-secondary">hoy mismo</span>
+                </h3>
+                <p className="font-body-lg text-on-surface-variant leading-relaxed">
+                  El proceso es simple y completamente gratuito. Completa el formulario con tus datos y nuestro equipo confirmará la disponibilidad del espacio y te contactará a la brevedad para coordinar todos los detalles de tu evento.
+                </p>
+                {/* Beneficios rápidos */}
+                <ul className="space-y-2 pt-2">
+                  {[
+                    'Sin costo de reserva',
+                    'Atención personalizada',
+                    'Menú y coctelería a medida',
+                    'Ambientación incluida',
+                  ].map((b, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-on-surface-variant">
+                      <span className="material-symbols-outlined text-secondary text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
+                        check_circle
+                      </span>
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="relative flex flex-col sm:flex-row gap-4">
+                <button
+                  id="btn-open-reserva"
+                  onClick={() => setShowReserva(true)}
+                  className="group flex-1 relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-secondary text-background font-label-md uppercase tracking-widest hover:bg-secondary/90 transition-all duration-300 rounded-sm shadow-lg shadow-secondary/20 active:scale-[0.98] overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                  <span className="material-symbols-outlined text-base relative z-10">event_available</span>
+                  <span className="relative z-10">Solicitar Reserva</span>
+                </button>
+                <a
+                  href="https://maps.google.com/?q=Carrera+26+%2371b-30+Bogotá"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-none inline-flex items-center justify-center gap-2 px-6 py-4 border border-outline-variant/40 text-on-surface-variant hover:border-secondary/60 hover:text-secondary transition-all duration-300 rounded-sm font-label-md uppercase tracking-widest text-sm"
+                >
+                  <span className="material-symbols-outlined text-base">map</span>
+                  Cómo Llegar
+                </a>
               </div>
             </div>
           </div>
