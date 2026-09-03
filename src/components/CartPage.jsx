@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useCart } from '../context/CartContext';
 import AddressSection from './AddressSection';
+import CheckoutModal from './CheckoutModal';
 
 const TAX_RATE = 0.08;
 const FREE_SHIPPING_THRESHOLD = 100;
@@ -10,8 +11,8 @@ export default function CartPage({ onClose }) {
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
   const [promoError, setPromoError] = useState('');
-  const [checkoutDone, setCheckoutDone] = useState(false);
   const [removingId, setRemovingId] = useState(null);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
   // ─── Delivery address state ───────────────────────────────────────────────
   const [deliveryAddress, setDeliveryAddress] = useState(null);
@@ -55,56 +56,24 @@ export default function CartPage({ onClose }) {
     }, 400);
   };
 
-  const handleCheckout = () => {
-    if (!deliveryValid) return;
-    // Persist the final order snapshot to localStorage
-    const order = {
-      id: `ORD-${Date.now()}`,
-      date: new Date().toISOString(),
-      items: cart,
-      subtotal: cartTotal.toFixed(2),
-      discount: discount.toFixed(2),
-      taxes: taxes.toFixed(2),
-      shipping: shipping === 0 ? 'Gratis' : `$${shipping.toFixed(2)}`,
-      total: orderTotal.toFixed(2),
-      deliveryAddress,
-    };
-    const prevOrders = JSON.parse(localStorage.getItem('lemalua_orders') || '[]');
-    localStorage.setItem('lemalua_orders', JSON.stringify([...prevOrders, order]));
+  const handleCheckoutSuccess = (apiData) => {
+    // Limpiar carrito tras pedido exitoso en la API
     clearCart();
-    setCheckoutDone(true);
   };
 
-  // ─── Checkout Confirmation Screen ───────────────────────────────────────────
-  if (checkoutDone) {
-    return (
-      <div className="fixed inset-0 z-[9998] bg-background flex flex-col items-center justify-center px-6 text-center">
-        <div className="fade-in space-y-6 max-w-md">
-          <span
-            className="material-symbols-outlined text-secondary block"
-            style={{ fontSize: 72, fontVariationSettings: "'FILL' 1" }}
-          >
-            check_circle
-          </span>
-          <h2 className="font-headline-md text-headline-md text-on-surface">
-            ¡Pedido Confirmado!
-          </h2>
-          <p className="font-body-md text-body-md text-on-surface-variant">
-            Tu selección ha sido registrada. Recibirás una confirmación en breve.
-          </p>
-          <p className="font-label-sm text-label-sm text-outline uppercase tracking-widest">
-            Tu pedido ha sido guardado en el historial local.
-          </p>
-          <button
-            onClick={onClose}
-            className="mt-4 bg-transparent border border-secondary text-secondary px-10 py-4 font-label-md text-label-md uppercase tracking-widest hover:bg-secondary/10 transition-all duration-300"
-          >
-            Seguir Comprando
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // ─── Checkout Modal overlay ──────────────────────────────────────────────────
+  const checkoutModalNode = showCheckoutModal ? (
+    <CheckoutModal
+      cart={cart}
+      cartTotal={orderTotal}
+      onClose={() => {
+        setShowCheckoutModal(false);
+        // Si el carrito quedó vacío (éxito), cerrar también CartPage
+        if (cart.length === 0) onClose();
+      }}
+      onSuccess={handleCheckoutSuccess}
+    />
+  ) : null;
 
   // ─── Main Cart Page ──────────────────────────────────────────────────────────
   return (
@@ -365,7 +334,7 @@ export default function CartPage({ onClose }) {
 
                 {/* Checkout Button */}
                 <button
-                  onClick={handleCheckout}
+                  onClick={() => setShowCheckoutModal(true)}
                   id="btn-checkout"
                   disabled={!deliveryValid}
                   title={!deliveryValid ? 'Ingresa una dirección de entrega válida para continuar' : ''}
@@ -379,7 +348,7 @@ export default function CartPage({ onClose }) {
                     {!deliveryValid && (
                       <span className="material-symbols-outlined text-base">lock</span>
                     )}
-                    Finalizar Compra
+                    Pagar · Contra Entrega
                   </span>
                   {deliveryValid && (
                     <div className="absolute inset-0 bg-secondary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
@@ -438,6 +407,9 @@ export default function CartPage({ onClose }) {
         .custom-scrollbar::-webkit-scrollbar-track { background: #1e2020; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #e9c176; border-radius: 2px; }
       `}</style>
+
+      {/* ─── Checkout Modal ─── */}
+      {checkoutModalNode}
     </div>
   );
 }
