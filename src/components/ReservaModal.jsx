@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import CountrySelect from './CountrySelect';
 
 const API_URL = 'https://billing.dommatos.com/api/public/cotizaciones';
 
@@ -36,6 +37,7 @@ export default function ReservaModal({ onClose }) {
   const [form, setForm] = useState({
     nombre: '',
     email: '',
+    codigoPais: '+57',
     telefono: '',
     fechaHora: '',
     personas: 1,
@@ -99,7 +101,7 @@ export default function ReservaModal({ onClose }) {
     return {
       prospecto_nombre: form.nombre.trim(),
       prospecto_email: form.email.trim(),
-      prospecto_telefono: form.telefono.trim(),
+      prospecto_telefono: `${form.codigoPais} ${form.telefono.trim()}`,
       fecha_vencimiento: getExpiryDate(),
       notas_cliente: notasCliente,
       detalles: [
@@ -131,10 +133,10 @@ export default function ReservaModal({ onClose }) {
       if (response.ok && data.success) {
         setResult({ ok: true, data: data.data });
       } else {
-        setResult({ ok: false, message: data.message || 'Ocurrió un error al registrar tu reserva.' });
+        setResult({ ok: false, message: `Error del servidor (Status ${response.status}): ${data.message || JSON.stringify(data)}` });
       }
-    } catch {
-      setResult({ ok: false, message: 'No se pudo conectar con el servidor. Por favor intenta de nuevo.' });
+    } catch (error) {
+      setResult({ ok: false, message: `Error de conexión: ${error.message}\nStack: ${error.stack}` });
     } finally {
       setLoading(false);
     }
@@ -203,9 +205,9 @@ export default function ReservaModal({ onClose }) {
               <h2 className="font-headline-md text-headline-md text-on-surface">
                 Error al Registrar
               </h2>
-              <p className="font-body-md text-on-surface-variant">
+              <div className="font-mono text-on-surface-variant whitespace-pre-wrap text-left break-all text-xs bg-error/5 p-4 rounded-md border border-error/20 w-full overflow-x-auto max-h-40 overflow-y-auto">
                 {result.message}
-              </p>
+              </div>
               <div className="bg-surface-container-lowest rounded-lg p-4 border border-outline-variant/20 text-left space-y-1">
                 <p className="font-body-md text-on-surface-variant text-sm">
                   Este caso será revisado por nuestro equipo. Cualquier novedad será contestada en la menor brevedad dentro del horario hábil de oficina.
@@ -324,17 +326,23 @@ export default function ReservaModal({ onClose }) {
               <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-telefono">
                 Teléfono <span className="text-secondary">*</span>
               </label>
-              <input
-                id="reserva-telefono"
-                name="telefono"
-                type="tel"
-                value={form.telefono}
-                onChange={handleChange}
-                placeholder="3001234567"
-                className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
-                  errors.telefono ? 'border-error' : 'border-outline-variant/40 focus:border-secondary'
-                }`}
-              />
+              <div className="flex h-[46px]">
+                <CountrySelect 
+                  value={form.codigoPais} 
+                  onChange={(val) => setForm(prev => ({...prev, codigoPais: val}))} 
+                />
+                <input
+                  id="reserva-telefono"
+                  name="telefono"
+                  type="tel"
+                  value={form.telefono}
+                  onChange={handleChange}
+                  placeholder="300 123 4567"
+                  className={`w-full bg-surface-container-low border border-l-0 rounded-r-sm px-4 h-full text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
+                    errors.telefono ? 'border-error focus:border-error' : 'border-outline-variant/40 focus:border-secondary'
+                  }`}
+                />
+              </div>
               {errors.telefono && (
                 <p className="text-error text-xs mt-1 flex items-center gap-1">
                   <span className="material-symbols-outlined text-xs">error</span>
