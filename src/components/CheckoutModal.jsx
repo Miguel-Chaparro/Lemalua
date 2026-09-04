@@ -25,12 +25,12 @@ export default function CheckoutModal({ cart, cartTotal, onClose, onSuccess }) {
     if (!form.nombre.trim()) e.nombre = 'El nombre es obligatorio';
     if (!form.email.trim()) {
       e.email = 'El correo es obligatorio';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
       e.email = 'Correo electrónico inválido';
     }
     if (!form.telefono.trim()) {
       e.telefono = 'El teléfono es obligatorio';
-    } else if (!/^\d{7,15}$/.test(form.telefono.replace(/\s/g, ''))) {
+    } else if (!/^\+?\d{7,15}$/.test(form.telefono.replace(/[\s\-\(\)]/g, ''))) {
       e.telefono = 'Teléfono inválido (7-15 dígitos)';
     }
     return e;
