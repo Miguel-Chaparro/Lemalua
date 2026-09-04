@@ -46,19 +46,21 @@ export default function CheckoutModal({ cart, cartTotal, onClose, onSuccess }) {
 
   const buildPayload = () => {
     const detalles = cart.map((item) => ({
-      producto_id: item.id,
-      cantidad: item.quantity,
-      precio_unitario_cotizado: Number(item.price ?? item.precio_venta_base ?? 0),
+      producto_id: Number(item.id) || parseInt(item.id, 10) || 1, // Forzar a número
+      cantidad: Number(item.quantity) || 1, // Forzar a número
+      precio_unitario_cotizado: Math.max(0, Number(item.price ?? item.precio_venta_base ?? 0)), // Forzar a número
     }));
 
     const notasCliente = form.descripcion.trim()
       ? `Pago contra entrega. ${form.descripcion.trim()}`
       : 'Pago contra entrega. Compra de productos seleccionados en tienda.';
 
+    const cleanPhone = (form.codigoPais + form.telefono).replace(/\D/g, ''); // Elimina todo lo que no sea dígito
+
     return {
       prospecto_nombre: form.nombre.trim(),
-      prospecto_email: form.email.trim(),
-      prospecto_telefono: `${form.codigoPais} ${form.telefono.trim()}`,
+      prospecto_email: form.email.trim().toLowerCase(),
+      prospecto_telefono: Number(cleanPhone), // Forzar a número para validación estricta de la API
       fecha_vencimiento: getExpiryDate(),
       notas_cliente: notasCliente,
       detalles,

@@ -98,16 +98,18 @@ export default function ReservaModal({ onClose }) {
       `Detalles adicionales: ${detallesTexto}`,
     ].join('\n');
 
+    const cleanPhone = (form.codigoPais + form.telefono).replace(/\D/g, ''); // Elimina todo lo que no sea dígito
+    
     return {
       prospecto_nombre: form.nombre.trim(),
-      prospecto_email: form.email.trim(),
-      prospecto_telefono: `${form.codigoPais} ${form.telefono.trim()}`,
+      prospecto_email: form.email.trim().toLowerCase(),
+      prospecto_telefono: Number(cleanPhone), // Forzar a número para validación estricta de la API
       fecha_vencimiento: getExpiryDate(),
       notas_cliente: notasCliente,
       detalles: [
         {
           producto_id: 1, // Producto genérico de reserva
-          cantidad: form.personas,
+          cantidad: Number(form.personas) || 1,
           precio_unitario_cotizado: 0,
         },
       ],
