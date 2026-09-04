@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import AddressSection from './AddressSection';
 import CheckoutModal from './CheckoutModal';
@@ -17,6 +17,7 @@ export default function CartPage({ onClose }) {
   // ─── Delivery address state ───────────────────────────────────────────────
   const [deliveryAddress, setDeliveryAddress] = useState(null);
   const [deliveryValid, setDeliveryValid] = useState(false);
+  const addressRef = useRef(null);
 
   const handleAddressValidated = useCallback((address, isValid) => {
     setDeliveryAddress(address);
@@ -59,6 +60,20 @@ export default function CartPage({ onClose }) {
   const handleCheckoutSuccess = (apiData) => {
     // Limpiar carrito tras pedido exitoso en la API
     clearCart();
+  };
+
+  const handleCheckoutClick = async () => {
+    if (deliveryValid) {
+      setShowCheckoutModal(true);
+      return;
+    }
+    
+    if (addressRef.current) {
+      const isValid = await addressRef.current.validate();
+      if (isValid) {
+        setShowCheckoutModal(true);
+      }
+    }
   };
 
   // ─── Checkout Modal overlay ──────────────────────────────────────────────────
@@ -293,7 +308,7 @@ export default function CartPage({ onClose }) {
 
                 {/* ─── Delivery Address Section ─── */}
                 <div className="border-t border-outline-variant/20 pt-5">
-                  <AddressSection onAddressValidated={handleAddressValidated} />
+                  <AddressSection ref={addressRef} onAddressValidated={handleAddressValidated} />
                 </div>
 
                 {/* Promo Code */}
@@ -334,34 +349,16 @@ export default function CartPage({ onClose }) {
 
                 {/* Checkout Button */}
                 <button
-                  onClick={() => setShowCheckoutModal(true)}
+                  onClick={handleCheckoutClick}
                   id="btn-checkout"
-                  disabled={!deliveryValid}
-                  title={!deliveryValid ? 'Ingresa una dirección de entrega válida para continuar' : ''}
-                  className={`w-full border py-4 font-label-md text-label-md uppercase tracking-widest transition-all duration-300 relative group overflow-hidden rounded-sm ${
-                    deliveryValid
-                      ? 'bg-[#1c1c1c] border-secondary text-secondary hover:bg-secondary/10 active:opacity-80 cursor-pointer'
-                      : 'bg-surface-container border-outline-variant/30 text-on-surface-variant/40 cursor-not-allowed'
-                  }`}
+                  className="w-full border py-4 font-label-md text-label-md uppercase tracking-widest transition-all duration-300 relative group overflow-hidden rounded-sm bg-[#1c1c1c] border-secondary text-secondary hover:bg-secondary/10 active:opacity-80 cursor-pointer"
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2">
-                    {!deliveryValid && (
-                      <span className="material-symbols-outlined text-base">lock</span>
-                    )}
+                    <span className="material-symbols-outlined text-base">shopping_bag</span>
                     Pagar · Contra Entrega
                   </span>
-                  {deliveryValid && (
-                    <div className="absolute inset-0 bg-secondary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                  )}
+                  <div className="absolute inset-0 bg-secondary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                 </button>
-
-                {/* Address hint when not yet validated */}
-                {!deliveryValid && (
-                  <p className="text-center font-label-sm text-label-sm text-on-surface-variant/50 flex items-center justify-center gap-1.5">
-                    <span className="material-symbols-outlined text-sm">location_on</span>
-                    Confirma tu dirección para habilitar el pago
-                  </p>
-                )}
 
                 {/* Shipping Notice */}
                 {shipping > 0 && (

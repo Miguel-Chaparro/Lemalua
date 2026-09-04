@@ -47,6 +47,7 @@ const navLinks = [
   { label: 'Promociones', to: '/promociones', isRoute: true },
   { label: 'Top Sellers', to: '/top-sellers', isRoute: true },
   { label: 'Nuestra Historia', to: '/historia', isRoute: true },
+  { label: 'Reservas', to: '/#reserva', isRoute: false },
 ];
 
 export default function Navbar({ onOpenCart, onOpenAuth }) {
@@ -105,17 +106,27 @@ export default function Navbar({ onOpenCart, onOpenAuth }) {
           {/* Desktop nav links */}
           <div className="hidden md:flex gap-8 items-center">
             {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.to}
-                className={`font-label-md text-label-md transition-colors ${
-                  isActive(link.to)
-                    ? 'text-secondary border-b border-secondary pb-1'
-                    : 'text-on-surface-variant hover:text-secondary'
-                }`}
-              >
-                {link.label}
-              </Link>
+              link.isRoute ? (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  className={`font-label-md text-label-md transition-colors ${
+                    isActive(link.to)
+                      ? 'text-secondary border-b border-secondary pb-1'
+                      : 'text-on-surface-variant hover:text-secondary'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.to}
+                  className="font-label-md text-label-md transition-colors text-on-surface-variant hover:text-secondary"
+                >
+                  {link.label}
+                </a>
+              )
             ))}
           </div>
 
@@ -232,23 +243,43 @@ export default function Navbar({ onOpenCart, onOpenAuth }) {
           {/* Navigation links */}
           <nav className="space-y-1">
             {navLinks.map((link, i) => (
-              <Link
-                key={link.label}
-                to={link.to}
-                className={`block py-4 border-b border-outline-variant/10 transition-all duration-200 group ${
-                  isActive(link.to) ? 'text-secondary' : 'text-on-surface'
-                }`}
-                style={{ transitionDelay: menuOpen ? `${i * 50}ms` : '0ms' }}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-display-lg text-3xl uppercase tracking-wide group-hover:text-secondary transition-colors">
-                    {link.label}
-                  </span>
-                  <span className="material-symbols-outlined text-on-surface-variant group-hover:text-secondary group-hover:translate-x-1 transition-all">
-                    arrow_forward
-                  </span>
-                </div>
-              </Link>
+              link.isRoute ? (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  onClick={() => setMenuOpen(false)}
+                  className={`block py-4 border-b border-outline-variant/10 transition-all duration-200 group ${
+                    isActive(link.to) ? 'text-secondary' : 'text-on-surface'
+                  }`}
+                  style={{ transitionDelay: menuOpen ? `${i * 50}ms` : '0ms' }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-display-lg text-3xl uppercase tracking-wide group-hover:text-secondary transition-colors">
+                      {link.label}
+                    </span>
+                    <span className="material-symbols-outlined text-on-surface-variant group-hover:text-secondary group-hover:translate-x-1 transition-all">
+                      arrow_forward
+                    </span>
+                  </div>
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.to}
+                  onClick={() => setMenuOpen(false)}
+                  className="block py-4 border-b border-outline-variant/10 transition-all duration-200 group text-on-surface"
+                  style={{ transitionDelay: menuOpen ? `${i * 50}ms` : '0ms' }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-display-lg text-3xl uppercase tracking-wide group-hover:text-secondary transition-colors">
+                      {link.label}
+                    </span>
+                    <span className="material-symbols-outlined text-on-surface-variant group-hover:text-secondary group-hover:translate-x-1 transition-all">
+                      arrow_forward
+                    </span>
+                  </div>
+                </a>
+              )
             ))}
           </nav>
 

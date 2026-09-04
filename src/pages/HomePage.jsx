@@ -4,6 +4,17 @@ import Hero from '../components/Hero';
 import Promotions from '../components/Promotions';
 import ReservaModal from '../components/ReservaModal';
 
+const pubImages = [
+  '/pub/Barra _Cocteleria.JPG',
+  '/pub/Barra_Cocteleria_2.JPG',
+  '/pub/Entrada.JPG',
+  '/pub/Licorera.JPG',
+  '/pub/Licorera_2.JPG',
+  '/pub/Vinos_Licorera.JPG',
+  '/pub/Vinos_Licorera_2.JPG',
+  '/pub/Zona_Privada.JPG'
+];
+
 // Quick-access cards para las secciones principales
 const sections = [
   {
@@ -245,6 +256,21 @@ export default function HomePage({ onSelectProduct }) {
           </div>
         </div>
 
+        {/* ── Galería del Pub (Marquee animado) ── */}
+        <div className="relative py-10 overflow-hidden border-b border-outline-variant/10 mb-10 bg-surface-container-lowest/30">
+          <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-[0.2em] text-center mb-8">
+            Nuestros Espacios
+          </p>
+          <div className="flex gap-4 w-max animate-marquee hover:[animation-play-state:paused] group/marquee px-4">
+            {[...pubImages, ...pubImages].map((img, i) => (
+              <div key={i} className="w-64 h-80 sm:w-80 sm:h-96 rounded-xl overflow-hidden flex-shrink-0 border border-outline-variant/20 relative shadow-xl">
+                <div className="absolute inset-0 bg-background/10 hover:bg-transparent transition-colors duration-500 z-10" />
+                <img src={img} alt="Lemalua Pub" className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* ── CTA Principal + Info del sitio ── */}
         <div className="relative max-w-container-max mx-auto px-4 md:px-margin-desktop pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-stretch">
@@ -347,10 +373,19 @@ export default function HomePage({ onSelectProduct }) {
         </div>
       </section>
 
-      {/* Modal de Reserva */}
       {showReserva && (
         <ReservaModal onClose={() => setShowReserva(false)} />
       )}
+
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(calc(-50% - 1rem)); }
+        }
+        .animate-marquee {
+          animation: marquee 50s linear infinite;
+        }
+      `}</style>
     </main>
   );
 }

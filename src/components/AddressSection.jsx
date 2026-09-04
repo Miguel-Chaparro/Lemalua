@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, forwardRef, useImperativeHandle } from 'react';
 import {
   geocodeAddress,
   getBrowserLocation,
@@ -15,7 +15,7 @@ import {
  * Props:
  *   onAddressValidated(address: string, isValid: boolean) — callback al padre
  */
-export default function AddressSection({ onAddressValidated }) {
+const AddressSection = forwardRef(({ onAddressValidated }, ref) => {
   const [street, setStreet] = useState('');
   const [complement, setComplement] = useState('');
   const [neighborhood, setNeighborhood] = useState('');
@@ -77,39 +77,56 @@ export default function AddressSection({ onAddressValidated }) {
     );
   }, []);
 
-  /** Geocodifica la dirección ingresada manualmente */
-  const handleValidateAddress = async () => {
-    const fullAddress = buildFullAddress();
-    if (!fullAddress) {
-      setErrorMsg('Por favor ingresa tu dirección de entrega.');
-      setStatus('error');
-      return;
-    }
-    setStatus('loading');
-    setErrorMsg('');
-    setDistanceKm(null);
+  /** Expone el método de validación al componente padre */
+  useImperativeHandle(ref, () => ({
+    validate: async () => {
+      const fullAddress = buildFullAddress();
+      if (!fullAddress) {
+        setErrorMsg('Por favor ingresa tu dirección de entrega.');
+        setStatus('error');
+        return false;
+      }
+      setStatus('loading');
+      setErrorMsg('');
+      setDistanceKm(null);
 
-    // Bypass temporal para edificios autorizados y la dirección de la tienda
-    const lowerAddr = fullAddress.toLowerCase();
-    if (lowerAddr.includes('hub 72') || lowerAddr.includes('alma 72') || lowerAddr.includes('carrera 26')) {
-      setDistanceKm(0);
-      setDisplayAddress(fullAddress);
-      setStatus('valid');
-      onAddressValidated(fullAddress, true);
-      return;
-    }
+      // Bypass temporal para edificios autorizados y la dirección de la tienda
+      const lowerAddr = fullAddress.toLowerCase();
+      if (lowerAddr.includes('hub 72') || lowerAddr.includes('alma 72') || lowerAddr.includes('carrera 26')) {
+        setDistanceKm(0);
+        setDisplayAddress(fullAddress);
+        setStatus('valid');
+        onAddressValidated(fullAddress, true);
+        return true;
+      }
 
-    const coords = await geocodeAddress(fullAddress);
-    if (!coords) {
-      setStatus('error');
-      setErrorMsg(
-        'No encontramos esa dirección en Bogotá. Verifica los datos o usa "Detectar mi ubicación".'
-      );
-      onAddressValidated('', false);
-      return;
+      const coords = await geocodeAddress(fullAddress);
+      if (!coords) {
+        setStatus('error');
+        setErrorMsg(
+          'No encontramos esa dirección en Bogotá. Verifica los datos o usa "Detectar mi ubicación".'
+        );
+        onAddressValidated('', false);
+        return false;
+      }
+      
+      const { inCoverage, distanceKm: dist } = checkCoverage(coords.lat, coords.lng);
+      setDistanceKm(dist);
+
+      const addr = fullAddress;
+      setDisplayAddress(addr);
+
+      if (inCoverage) {
+        setStatus('valid');
+        onAddressValidated(addr, true);
+        return true;
+      } else {
+        setStatus('out_of_range');
+        onAddressValidated(addr, false);
+        return false;
+      }
     }
-    await processCoords(coords.lat, coords.lng, fullAddress);
-  };
+  }));
 
   /**
    * Usa las coordenadas GPS ya obtenidas (o las solicita si aún no se tienen).
@@ -419,15 +436,7 @@ export default function AddressSection({ onAddressValidated }) {
             </div>
 
             <div className="addr-actions">
-              <button
-                id="btn-validate-address"
-                className="btn-validate"
-                onClick={handleValidateAddress}
-                disabled={status === 'loading'}
-              >
-                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>map</span>
-                Verificar Cobertura
-              </button>
+
 
               <button
                 id="btn-detect-location"
@@ -459,4 +468,6 @@ export default function AddressSection({ onAddressValidated }) {
       </div>
     </>
   );
-}
+});
+
+export default AddressSection;

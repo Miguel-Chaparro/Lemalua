@@ -202,9 +202,9 @@ export default function CheckoutModal({ cart, cartTotal, onClose, onSuccess }) {
       {/* Backdrop */}
       <div className="absolute inset-0 bg-background/80 backdrop-blur-md" onClick={onClose} />
 
-      <div className="relative z-10 w-full max-w-lg bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl overflow-hidden animate-[fadeInUp_0.35s_ease-out]">
+      <div className="relative z-10 w-full max-w-lg max-h-[90vh] flex flex-col bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl overflow-hidden animate-[fadeInUp_0.35s_ease-out]">
         {/* Header */}
-        <div className="px-8 pt-8 pb-5 border-b border-outline-variant/20 flex items-start justify-between gap-4">
+        <div className="px-8 pt-8 pb-5 border-b border-outline-variant/20 flex items-start justify-between gap-4 flex-shrink-0">
           <div>
             <span className="font-label-sm text-label-sm text-secondary uppercase tracking-widest block mb-1">
               Pago Contra Entrega
@@ -227,158 +227,160 @@ export default function CheckoutModal({ cart, cartTotal, onClose, onSuccess }) {
           </button>
         </div>
 
-        {/* Resumen de productos */}
-        <div className="px-8 py-4 bg-surface-container-low border-b border-outline-variant/10">
-          <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-3">
-            Resumen del Pedido
-          </p>
-          <div className="space-y-2 max-h-28 overflow-y-auto custom-scrollbar">
-            {cart.map((item) => (
-              <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="w-7 h-7 rounded overflow-hidden bg-surface flex-shrink-0">
-                    <img
-                      src={item.image ?? item.foto_url ?? ''}
-                      alt={item.name ?? item.nombre ?? ''}
-                      className="w-full h-full object-cover"
-                    />
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+          {/* Resumen de productos */}
+          <div className="px-8 py-4 bg-surface-container-low border-b border-outline-variant/10">
+            <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-3">
+              Resumen del Pedido
+            </p>
+            <div className="space-y-2 max-h-28 overflow-y-auto custom-scrollbar">
+              {cart.map((item) => (
+                <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-7 h-7 rounded overflow-hidden bg-surface flex-shrink-0">
+                      <img
+                        src={item.image ?? item.foto_url ?? ''}
+                        alt={item.name ?? item.nombre ?? ''}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className="font-body-md text-on-surface-variant truncate">
+                      {item.name ?? item.nombre ?? ''}
+                    </span>
+                    <span className="text-on-surface-variant/60 flex-shrink-0">×{item.quantity}</span>
                   </div>
-                  <span className="font-body-md text-on-surface-variant truncate">
-                    {item.name ?? item.nombre ?? ''}
+                  <span className="font-label-md text-secondary flex-shrink-0">
+                    ${(Number(item.price ?? item.precio_venta_base ?? 0) * item.quantity).toLocaleString('es-CO')}
                   </span>
-                  <span className="text-on-surface-variant/60 flex-shrink-0">×{item.quantity}</span>
                 </div>
-                <span className="font-label-md text-secondary flex-shrink-0">
-                  ${(Number(item.price ?? item.precio_venta_base ?? 0) * item.quantity).toLocaleString('es-CO')}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="px-8 py-6 space-y-5" noValidate>
-          {/* Nombre */}
-          <div>
-            <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="checkout-nombre">
-              Nombre Completo <span className="text-secondary">*</span>
-            </label>
-            <input
-              id="checkout-nombre"
-              name="nombre"
-              type="text"
-              value={form.nombre}
-              onChange={handleChange}
-              placeholder="Tu nombre y apellido"
-              className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
-                errors.nombre ? 'border-error focus:border-error' : 'border-outline-variant/40 focus:border-secondary'
-              }`}
-            />
-            {errors.nombre && (
-              <p className="text-error text-xs mt-1 flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs">error</span>
-                {errors.nombre}
-              </p>
-            )}
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="checkout-email">
-              Correo Electrónico <span className="text-secondary">*</span>
-            </label>
-            <input
-              id="checkout-email"
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="correo@ejemplo.com"
-              className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
-                errors.email ? 'border-error focus:border-error' : 'border-outline-variant/40 focus:border-secondary'
-              }`}
-            />
-            {errors.email && (
-              <p className="text-error text-xs mt-1 flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs">error</span>
-                {errors.email}
-              </p>
-            )}
-          </div>
-
-          {/* Teléfono */}
-          <div>
-            <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="checkout-telefono">
-              Teléfono <span className="text-secondary">*</span>
-            </label>
-            <input
-              id="checkout-telefono"
-              name="telefono"
-              type="tel"
-              value={form.telefono}
-              onChange={handleChange}
-              placeholder="3001234567"
-              className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
-                errors.telefono ? 'border-error focus:border-error' : 'border-outline-variant/40 focus:border-secondary'
-              }`}
-            />
-            {errors.telefono && (
-              <p className="text-error text-xs mt-1 flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs">error</span>
-                {errors.telefono}
-              </p>
-            )}
-          </div>
-
-          {/* Descripción (opcional) */}
-          <div>
-            <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="checkout-descripcion">
-              Descripción <span className="text-on-surface-variant/40 text-[10px] normal-case">Opcional</span>
-            </label>
-            <textarea
-              id="checkout-descripcion"
-              name="descripcion"
-              value={form.descripcion}
-              onChange={handleChange}
-              placeholder="Notas adicionales para tu pedido..."
-              rows={3}
-              className="w-full bg-surface-container-low border border-outline-variant/40 rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:border-secondary focus:ring-0 resize-none"
-            />
-          </div>
-
-          {/* Info contra entrega */}
-          <div className="flex items-start gap-3 bg-secondary/5 border border-secondary/20 rounded-lg p-4">
-            <span className="material-symbols-outlined text-secondary flex-shrink-0 mt-0.5" style={{ fontSize: 20 }}>
-              local_shipping
-            </span>
-            <div>
-              <p className="font-label-sm text-label-sm text-secondary uppercase tracking-wide">Pago Contra Entrega</p>
-              <p className="font-body-md text-on-surface-variant text-xs mt-0.5">
-                Pagas al recibir tu pedido. Confirmaremos tu orden próximamente.
-              </p>
+              ))}
             </div>
           </div>
 
-          {/* Botón submit */}
-          <button
-            type="submit"
-            id="btn-submit-checkout"
-            disabled={loading}
-            className="w-full py-4 bg-secondary text-background font-label-md uppercase tracking-widest hover:bg-secondary/90 transition-all rounded-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98]"
-          >
-            {loading ? (
-              <>
-                <span className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-                Procesando...
-              </>
-            ) : (
-              <>
-                <span className="material-symbols-outlined text-base">shopping_bag</span>
-                Confirmar Pedido
-              </>
-            )}
-          </button>
-        </form>
+          {/* Formulario */}
+          <form onSubmit={handleSubmit} className="px-8 py-6 space-y-5" noValidate>
+            {/* Nombre */}
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="checkout-nombre">
+                Nombre Completo <span className="text-secondary">*</span>
+              </label>
+              <input
+                id="checkout-nombre"
+                name="nombre"
+                type="text"
+                value={form.nombre}
+                onChange={handleChange}
+                placeholder="Tu nombre y apellido"
+                className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
+                  errors.nombre ? 'border-error focus:border-error' : 'border-outline-variant/40 focus:border-secondary'
+                }`}
+              />
+              {errors.nombre && (
+                <p className="text-error text-xs mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">error</span>
+                  {errors.nombre}
+                </p>
+              )}
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="checkout-email">
+                Correo Electrónico <span className="text-secondary">*</span>
+              </label>
+              <input
+                id="checkout-email"
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="correo@ejemplo.com"
+                className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
+                  errors.email ? 'border-error focus:border-error' : 'border-outline-variant/40 focus:border-secondary'
+                }`}
+              />
+              {errors.email && (
+                <p className="text-error text-xs mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">error</span>
+                  {errors.email}
+                </p>
+              )}
+            </div>
+
+            {/* Teléfono */}
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="checkout-telefono">
+                Teléfono <span className="text-secondary">*</span>
+              </label>
+              <input
+                id="checkout-telefono"
+                name="telefono"
+                type="tel"
+                value={form.telefono}
+                onChange={handleChange}
+                placeholder="3001234567"
+                className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
+                  errors.telefono ? 'border-error focus:border-error' : 'border-outline-variant/40 focus:border-secondary'
+                }`}
+              />
+              {errors.telefono && (
+                <p className="text-error text-xs mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">error</span>
+                  {errors.telefono}
+                </p>
+              )}
+            </div>
+
+            {/* Descripción (opcional) */}
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="checkout-descripcion">
+                Descripción <span className="text-on-surface-variant/40 text-[10px] normal-case">Opcional</span>
+              </label>
+              <textarea
+                id="checkout-descripcion"
+                name="descripcion"
+                value={form.descripcion}
+                onChange={handleChange}
+                placeholder="Notas adicionales para tu pedido..."
+                rows={3}
+                className="w-full bg-surface-container-low border border-outline-variant/40 rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:border-secondary focus:ring-0 resize-none"
+              />
+            </div>
+
+            {/* Info contra entrega */}
+            <div className="flex items-start gap-3 bg-secondary/5 border border-secondary/20 rounded-lg p-4">
+              <span className="material-symbols-outlined text-secondary flex-shrink-0 mt-0.5" style={{ fontSize: 20 }}>
+                local_shipping
+              </span>
+              <div>
+                <p className="font-label-sm text-label-sm text-secondary uppercase tracking-wide">Pago Contra Entrega</p>
+                <p className="font-body-md text-on-surface-variant text-xs mt-0.5">
+                  Pagas al recibir tu pedido. Confirmaremos tu orden próximamente.
+                </p>
+              </div>
+            </div>
+
+            {/* Botón submit */}
+            <button
+              type="submit"
+              id="btn-submit-checkout"
+              disabled={loading}
+              className="w-full py-4 bg-secondary text-background font-label-md uppercase tracking-widest hover:bg-secondary/90 transition-all rounded-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98]"
+            >
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
+                  Procesando...
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-base">shopping_bag</span>
+                  Confirmar Pedido
+                </>
+              )}
+            </button>
+          </form>
+        </div>
       </div>
 
       <style>{`

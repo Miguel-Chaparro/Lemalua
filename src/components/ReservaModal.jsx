@@ -246,9 +246,9 @@ export default function ReservaModal({ onClose }) {
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
       <div className="absolute inset-0 bg-background/80 backdrop-blur-md" onClick={onClose} />
 
-      <div className="relative z-10 w-full max-w-lg bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl overflow-hidden animate-[fadeInUp_0.35s_ease-out] my-auto">
+      <div className="relative z-10 w-full max-w-lg max-h-[90vh] flex flex-col bg-surface-container border border-outline-variant/30 rounded-xl shadow-2xl overflow-hidden animate-[fadeInUp_0.35s_ease-out] my-auto">
         {/* Header */}
-        <div className="px-8 pt-8 pb-5 border-b border-outline-variant/20 flex items-start justify-between gap-4">
+        <div className="px-8 pt-8 pb-5 border-b border-outline-variant/20 flex items-start justify-between gap-4 flex-shrink-0">
           <div>
             <span className="font-label-sm text-label-sm text-secondary uppercase tracking-widest block mb-1">
               Reserva de Sitio
@@ -269,208 +269,210 @@ export default function ReservaModal({ onClose }) {
         </div>
 
         {/* Formulario */}
-        <form onSubmit={handleSubmit} className="px-8 py-6 space-y-5" noValidate>
-          {/* Nombre */}
-          <div>
-            <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-nombre">
-              Nombre Completo <span className="text-secondary">*</span>
-            </label>
-            <input
-              id="reserva-nombre"
-              name="nombre"
-              type="text"
-              value={form.nombre}
-              onChange={handleChange}
-              placeholder="Tu nombre y apellido"
-              className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
-                errors.nombre ? 'border-error' : 'border-outline-variant/40 focus:border-secondary'
-              }`}
-            />
-            {errors.nombre && (
-              <p className="text-error text-xs mt-1 flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs">error</span>
-                {errors.nombre}
-              </p>
-            )}
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-email">
-              Correo Electrónico <span className="text-secondary">*</span>
-            </label>
-            <input
-              id="reserva-email"
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="correo@ejemplo.com"
-              className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
-                errors.email ? 'border-error' : 'border-outline-variant/40 focus:border-secondary'
-              }`}
-            />
-            {errors.email && (
-              <p className="text-error text-xs mt-1 flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs">error</span>
-                {errors.email}
-              </p>
-            )}
-          </div>
-
-          {/* Teléfono */}
-          <div>
-            <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-telefono">
-              Teléfono <span className="text-secondary">*</span>
-            </label>
-            <input
-              id="reserva-telefono"
-              name="telefono"
-              type="tel"
-              value={form.telefono}
-              onChange={handleChange}
-              placeholder="3001234567"
-              className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
-                errors.telefono ? 'border-error' : 'border-outline-variant/40 focus:border-secondary'
-              }`}
-            />
-            {errors.telefono && (
-              <p className="text-error text-xs mt-1 flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs">error</span>
-                {errors.telefono}
-              </p>
-            )}
-          </div>
-
-          {/* Fecha y Hora */}
-          <div>
-            <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-fechaHora">
-              Fecha y Hora <span className="text-secondary">*</span>
-            </label>
-            <input
-              id="reserva-fechaHora"
-              name="fechaHora"
-              type="datetime-local"
-              value={form.fechaHora}
-              onChange={handleChange}
-              min={minDateTime}
-              className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface outline-none transition-colors focus:ring-0 ${
-                errors.fechaHora ? 'border-error' : 'border-outline-variant/40 focus:border-secondary'
-              } [color-scheme:dark]`}
-            />
-            {errors.fechaHora && (
-              <p className="text-error text-xs mt-1 flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs">error</span>
-                {errors.fechaHora}
-              </p>
-            )}
-          </div>
-
-          {/* Número de personas */}
-          <div>
-            <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-personas">
-              Número de Personas <span className="text-secondary">*</span>
-              <span className="text-on-surface-variant/40 text-[10px] normal-case ml-1">(máx. 20)</span>
-            </label>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  const newVal = Math.max(1, form.personas - 1);
-                  setForm((p) => ({ ...p, personas: newVal }));
-                  if (errors.personas) setErrors((p) => ({ ...p, personas: undefined }));
-                }}
-                className="w-10 h-10 border border-outline-variant/40 hover:border-secondary hover:text-secondary text-on-surface-variant flex items-center justify-center rounded-sm transition-all"
-              >
-                <span className="material-symbols-outlined text-base">remove</span>
-              </button>
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+          <form onSubmit={handleSubmit} className="px-8 py-6 space-y-5" noValidate>
+            {/* Nombre */}
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-nombre">
+                Nombre Completo <span className="text-secondary">*</span>
+              </label>
               <input
-                id="reserva-personas"
-                name="personas"
-                type="number"
-                min={1}
-                max={20}
-                value={form.personas}
+                id="reserva-nombre"
+                name="nombre"
+                type="text"
+                value={form.nombre}
                 onChange={handleChange}
-                className={`flex-1 bg-surface-container-low border rounded-sm px-4 py-2 text-on-surface text-center outline-none transition-colors focus:ring-0 ${
-                  errors.personas ? 'border-error' : 'border-outline-variant/40 focus:border-secondary'
+                placeholder="Tu nombre y apellido"
+                className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
+                  errors.nombre ? 'border-error' : 'border-outline-variant/40 focus:border-secondary'
                 }`}
               />
-              <button
-                type="button"
-                onClick={() => {
-                  const newVal = Math.min(20, form.personas + 1);
-                  setForm((p) => ({ ...p, personas: newVal }));
-                  if (errors.personas) setErrors((p) => ({ ...p, personas: undefined }));
-                }}
-                className="w-10 h-10 border border-outline-variant/40 hover:border-secondary hover:text-secondary text-on-surface-variant flex items-center justify-center rounded-sm transition-all"
-              >
-                <span className="material-symbols-outlined text-base">add</span>
-              </button>
+              {errors.nombre && (
+                <p className="text-error text-xs mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">error</span>
+                  {errors.nombre}
+                </p>
+              )}
             </div>
-            {errors.personas && (
-              <p className="text-error text-xs mt-1 flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs">error</span>
-                {errors.personas}
-              </p>
-            )}
-            {/* Barra visual de capacidad */}
-            <div className="mt-2 h-1.5 bg-surface-container-low rounded-full overflow-hidden border border-outline-variant/10">
-              <div
-                className="h-full bg-secondary transition-all duration-300 rounded-full"
-                style={{ width: `${(form.personas / 20) * 100}%` }}
+
+            {/* Email */}
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-email">
+                Correo Electrónico <span className="text-secondary">*</span>
+              </label>
+              <input
+                id="reserva-email"
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="correo@ejemplo.com"
+                className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
+                  errors.email ? 'border-error' : 'border-outline-variant/40 focus:border-secondary'
+                }`}
+              />
+              {errors.email && (
+                <p className="text-error text-xs mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">error</span>
+                  {errors.email}
+                </p>
+              )}
+            </div>
+
+            {/* Teléfono */}
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-telefono">
+                Teléfono <span className="text-secondary">*</span>
+              </label>
+              <input
+                id="reserva-telefono"
+                name="telefono"
+                type="tel"
+                value={form.telefono}
+                onChange={handleChange}
+                placeholder="3001234567"
+                className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:ring-0 ${
+                  errors.telefono ? 'border-error' : 'border-outline-variant/40 focus:border-secondary'
+                }`}
+              />
+              {errors.telefono && (
+                <p className="text-error text-xs mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">error</span>
+                  {errors.telefono}
+                </p>
+              )}
+            </div>
+
+            {/* Fecha y Hora */}
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-fechaHora">
+                Fecha y Hora <span className="text-secondary">*</span>
+              </label>
+              <input
+                id="reserva-fechaHora"
+                name="fechaHora"
+                type="datetime-local"
+                value={form.fechaHora}
+                onChange={handleChange}
+                min={minDateTime}
+                className={`w-full bg-surface-container-low border rounded-sm px-4 py-3 text-on-surface outline-none transition-colors focus:ring-0 ${
+                  errors.fechaHora ? 'border-error' : 'border-outline-variant/40 focus:border-secondary'
+                } [color-scheme:dark]`}
+              />
+              {errors.fechaHora && (
+                <p className="text-error text-xs mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">error</span>
+                  {errors.fechaHora}
+                </p>
+              )}
+            </div>
+
+            {/* Número de personas */}
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-personas">
+                Número de Personas <span className="text-secondary">*</span>
+                <span className="text-on-surface-variant/40 text-[10px] normal-case ml-1">(máx. 20)</span>
+              </label>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newVal = Math.max(1, form.personas - 1);
+                    setForm((p) => ({ ...p, personas: newVal }));
+                    if (errors.personas) setErrors((p) => ({ ...p, personas: undefined }));
+                  }}
+                  className="w-10 h-10 border border-outline-variant/40 hover:border-secondary hover:text-secondary text-on-surface-variant flex items-center justify-center rounded-sm transition-all"
+                >
+                  <span className="material-symbols-outlined text-base">remove</span>
+                </button>
+                <input
+                  id="reserva-personas"
+                  name="personas"
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={form.personas}
+                  onChange={handleChange}
+                  className={`flex-1 bg-surface-container-low border rounded-sm px-4 py-2 text-on-surface text-center outline-none transition-colors focus:ring-0 ${
+                    errors.personas ? 'border-error' : 'border-outline-variant/40 focus:border-secondary'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newVal = Math.min(20, form.personas + 1);
+                    setForm((p) => ({ ...p, personas: newVal }));
+                    if (errors.personas) setErrors((p) => ({ ...p, personas: undefined }));
+                  }}
+                  className="w-10 h-10 border border-outline-variant/40 hover:border-secondary hover:text-secondary text-on-surface-variant flex items-center justify-center rounded-sm transition-all"
+                >
+                  <span className="material-symbols-outlined text-base">add</span>
+                </button>
+              </div>
+              {errors.personas && (
+                <p className="text-error text-xs mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">error</span>
+                  {errors.personas}
+                </p>
+              )}
+              {/* Barra visual de capacidad */}
+              <div className="mt-2 h-1.5 bg-surface-container-low rounded-full overflow-hidden border border-outline-variant/10">
+                <div
+                  className="h-full bg-secondary transition-all duration-300 rounded-full"
+                  style={{ width: `${(form.personas / 20) * 100}%` }}
+                />
+              </div>
+              <p className="text-xs text-on-surface-variant/50 mt-1 text-right">{form.personas}/20 personas</p>
+            </div>
+
+            {/* Detalles adicionales */}
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-detalles">
+                Detalles Adicionales{' '}
+                <span className="text-on-surface-variant/40 text-[10px] normal-case">Opcional</span>
+              </label>
+              <textarea
+                id="reserva-detalles"
+                name="detalles"
+                value={form.detalles}
+                onChange={handleChange}
+                placeholder="Ocasión especial, requerimientos dietéticos, preferencias de mesa..."
+                rows={3}
+                className="w-full bg-surface-container-low border border-outline-variant/40 rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:border-secondary focus:ring-0 resize-none"
               />
             </div>
-            <p className="text-xs text-on-surface-variant/50 mt-1 text-right">{form.personas}/20 personas</p>
-          </div>
 
-          {/* Detalles adicionales */}
-          <div>
-            <label className="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" htmlFor="reserva-detalles">
-              Detalles Adicionales{' '}
-              <span className="text-on-surface-variant/40 text-[10px] normal-case">Opcional</span>
-            </label>
-            <textarea
-              id="reserva-detalles"
-              name="detalles"
-              value={form.detalles}
-              onChange={handleChange}
-              placeholder="Ocasión especial, requerimientos dietéticos, preferencias de mesa..."
-              rows={3}
-              className="w-full bg-surface-container-low border border-outline-variant/40 rounded-sm px-4 py-3 text-on-surface placeholder:text-on-surface-variant/40 outline-none transition-colors focus:border-secondary focus:ring-0 resize-none"
-            />
-          </div>
+            {/* Aviso */}
+            <div className="flex items-start gap-3 bg-secondary/5 border border-secondary/20 rounded-lg p-4">
+              <span className="material-symbols-outlined text-secondary flex-shrink-0 mt-0.5" style={{ fontSize: 20 }}>
+                info
+              </span>
+              <p className="font-body-md text-on-surface-variant text-xs">
+                Tu solicitud de reserva será revisada por nuestro equipo. Recibirás confirmación de disponibilidad por correo electrónico en el horario hábil de oficina.
+              </p>
+            </div>
 
-          {/* Aviso */}
-          <div className="flex items-start gap-3 bg-secondary/5 border border-secondary/20 rounded-lg p-4">
-            <span className="material-symbols-outlined text-secondary flex-shrink-0 mt-0.5" style={{ fontSize: 20 }}>
-              info
-            </span>
-            <p className="font-body-md text-on-surface-variant text-xs">
-              Tu solicitud de reserva será revisada por nuestro equipo. Recibirás confirmación de disponibilidad por correo electrónico en el horario hábil de oficina.
-            </p>
-          </div>
-
-          {/* Botón submit */}
-          <button
-            type="submit"
-            id="btn-submit-reserva"
-            disabled={loading}
-            className="w-full py-4 bg-secondary text-background font-label-md uppercase tracking-widest hover:bg-secondary/90 transition-all rounded-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98]"
-          >
-            {loading ? (
-              <>
-                <span className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-                Registrando Reserva...
-              </>
-            ) : (
-              <>
-                <span className="material-symbols-outlined text-base">event_available</span>
-                Solicitar Reserva
-              </>
-            )}
-          </button>
-        </form>
+            {/* Botón submit */}
+            <button
+              type="submit"
+              id="btn-submit-reserva"
+              disabled={loading}
+              className="w-full py-4 bg-secondary text-background font-label-md uppercase tracking-widest hover:bg-secondary/90 transition-all rounded-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98]"
+            >
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
+                  Registrando Reserva...
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-base">event_available</span>
+                  Solicitar Reserva
+                </>
+              )}
+            </button>
+          </form>
+        </div>
       </div>
 
       <style>{`
