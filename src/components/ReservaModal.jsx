@@ -103,7 +103,7 @@ export default function ReservaModal({ onClose }) {
     return {
       prospecto_nombre: form.nombre.trim(),
       prospecto_email: form.email.trim().toLowerCase(),
-      prospecto_telefono: Number(cleanPhone), // Forzar a número para validación estricta de la API
+      prospecto_telefono: cleanPhone, // Enviar como string (Joi espera string)
       fecha_vencimiento: getExpiryDate(),
       notas_cliente: notasCliente,
       detalles: [
